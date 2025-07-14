@@ -1,11 +1,11 @@
 import { GlobalFonts, createCanvas, loadImage } from '@napi-rs/canvas';
-import general from '../functions/general.js';
-import path from 'path';
+import {writeFile} from './general.js';
 
 // console.log(path.parse(import.meta.filename));
 // import { broadcasts as broadcastList } from './broadcast data.js';
 
-const imageRootPath = './Broadcasts and Events';
+const filename = '2024 CC broadcasts winter.png';
+const imageRootPath = '.';
 const x = 2010;
 const y = 915;
 const yellow = '#FFCB05FF';
@@ -427,6 +427,6 @@ Promise.all(imageArray).then(output => {
 	return canvas.encode('png');
 })
 .then(result => {
-	general.writeFile(`${path.parse(import.meta.filename).dir}/${path.parse(import.meta.filename).name}.png`, result);
+	writeFile(filename, result);
 })
 .catch(err => console.error(err));
