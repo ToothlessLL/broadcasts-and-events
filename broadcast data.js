@@ -1,0 +1,45 @@
+const imageRootPath = './Broadcasts and Events';
+const broadcasts = new Map();
+
+broadcasts.set(`Barrows dye`, {filename: `${imageRootPath}/images/barrows_dye`, color: '#B6D7A8'});
+broadcasts.set(`Shadow dye`, {filename: `${imageRootPath}/images/shadow_dye`, color: '#D5A6BD'});
+broadcasts.set(`Ice dye`, {filename: `${imageRootPath}/images/ice_dye`, color: '#C9DAF8'});
+broadcasts.set(`Third Age dye`, {filename: `${imageRootPath}/images/third_age_dye`, color: '#CCCCCC'});
+broadcasts.set(`Blood dye`, {filename: `${imageRootPath}/images/blood_dye`, color: '#EA9999'});
+broadcasts.set(`Third age full helmet`, {filename: `${imageRootPath}/images/3a_melee_helm`, color: '#FFE599'});
+broadcasts.set(`Third age platebody`, {filename: `${imageRootPath}/images/3a_melee_top`, color: '#FFE599'});
+broadcasts.set(`Third age platelegs`, {filename: `${imageRootPath}/images/3a_melee_legs`, color: '#FFE599'});
+broadcasts.set(`Third age kiteshield`, {filename: `${imageRootPath}/images/3a_kiteshield`, color: '#FFE599'});
+broadcasts.set(`Backstab cape`, {filename: `${imageRootPath}/images/backstab_cape`, color: '#E6B8AF'});
+broadcasts.set(`Third age mage hat`, {filename: `${imageRootPath}/images/3a_mage_hat`, color: '#FFE599'});
+broadcasts.set(`Third age robe top`, {filename: `${imageRootPath}/images/3a_mage_top`, color: '#FFE599'});
+broadcasts.set(`Third age robe`, {filename: `${imageRootPath}/images/3a_mage_legs`, color: '#FFE599'});
+broadcasts.set(`Third age amulet`, {filename: `${imageRootPath}/images/3a_amulet`, color: '#FFE599'});
+broadcasts.set(`Sack of effigies`, {filename: `${imageRootPath}/images/sack_of_effigies`, color: '#EFEFEF'});
+broadcasts.set(`Third age ranger coif`, {filename: `${imageRootPath}/images/3a_coif`, color: '#FFE599'});
+broadcasts.set(`Third age ranger body`, {filename: `${imageRootPath}/images/3a_range_top`, color: '#FFE599'});
+broadcasts.set(`Third age ranger chaps`, {filename: `${imageRootPath}/images/3a_range_legs`, color: '#FFE599'});
+broadcasts.set(`Third age vambraces`, {filename: `${imageRootPath}/images/3a_range_vambraces`, color: '#FFE599'});
+broadcasts.set(`Explosive barrel`, {filename: `${imageRootPath}/images/explosive_barrel`, color: '#FFE599'});
+broadcasts.set(`Third age druidic wreath`, {filename: `${imageRootPath}/images/druidic_wreath`, color: '#FFE599'});
+broadcasts.set(`Third age druidic robe top`, {filename: `${imageRootPath}/images/druidic_top`, color: '#FFE599'});
+broadcasts.set(`Third age druidic robe bottom`, {filename: `${imageRootPath}/images/druidic_bottom`, color: '#FFE599'});
+broadcasts.set(`Third age druidic staff`, {filename: `${imageRootPath}/images/druidic_staff`, color: '#FFE599'});
+broadcasts.set(`Third age druidic cloak`, {filename: `${imageRootPath}/images/druidic_cloak`, color: '#FFE599'});
+broadcasts.set(`Second-Age full helm`, {filename: `${imageRootPath}/images/2a_melee_helm`, color: '#FFE599'});
+broadcasts.set(`Second-Age platebody`, {filename: `${imageRootPath}/images/2a_melee_body`, color: '#FFE599'});
+broadcasts.set(`Second-Age platelegs`, {filename: `${imageRootPath}/images/2a_melee_legs`, color: '#FFE599'});
+broadcasts.set(`Second-Age sword`, {filename: `${imageRootPath}/images/2a_melee_sword`, color: '#FFE599'});
+broadcasts.set(`Orlando Smith's hat`, {filename: `${imageRootPath}/images/orlando_smith_hat`, color: '#DD7E6B'});
+broadcasts.set(`Second-Age mage mask`, {filename: `${imageRootPath}/images/2a_mage_helm`, color: '#FFE599'});
+broadcasts.set(`Second-Age robe top`, {filename: `${imageRootPath}/images/2a_mage_body`, color: '#FFE599'});
+broadcasts.set(`Second-Age robe bottom`, {filename: `${imageRootPath}/images/2a_mage_legs`, color: '#FFE599'});
+broadcasts.set(`Second-Age staff`, {filename: `${imageRootPath}/images/2a_mage_staff`, color: '#FFE599'});
+broadcasts.set(`Golden Compass`, {filename: `${imageRootPath}/images/golden_compass`, color: '#B6D7A8'});
+broadcasts.set(`Second-Age range coif`, {filename: `${imageRootPath}/images/2a_range_coif`, color: '#FFE599'});
+broadcasts.set(`Second-Age range top`, {filename: `${imageRootPath}/images/2a_range_body`, color: '#FFE599'});
+broadcasts.set(`Second-Age range legs`, {filename: `${imageRootPath}/images/2a_range_legs`, color: '#FFE599'});
+broadcasts.set(`Second-Age bow`, {filename: `${imageRootPath}/images/2a_range_bow`, color: '#FFE599'});
+broadcasts.set(`Blank`, {filename: `${imageRootPath}/images/blank`, color: '#B6D7A8'});
+
+export {broadcasts}
