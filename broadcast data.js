@@ -1,4 +1,4 @@
-const imageRootPath = './Broadcasts and Events';
+const imageRootPath = '.';
 const broadcasts = new Map();
 
 broadcasts.set(`Barrows dye`, {filename: `${imageRootPath}/images/barrows_dye`, color: '#B6D7A8'});
