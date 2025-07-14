@@ -1,4 +1,4 @@
-import general from '../functions/general.js';
+import {writeFile} from './general.js';
 import { GlobalFonts, createCanvas, loadImage } from '@napi-rs/canvas';
 
 const skeletonData = {
@@ -102,27 +102,13 @@ const padding = 20;
 let totalBroadcasts = 0;
 let totalValue = 0;
 
-const imageRootPath = './Broadcasts and Events';
+const imageRootPath = '.';
 const header1 = loadImage(`${imageRootPath}/images/header1.png`);
 const header2 = loadImage(`${imageRootPath}/images/header2.png`);
 const header3 = loadImage(`${imageRootPath}/images/header3.png`);
 const verticalBorder = loadImage(`${imageRootPath}/images/vertical_border.png`);
 const horizontalBorder = loadImage(`${imageRootPath}/images/horizontal_border.png`);
 const backgroundImage = loadImage(`${imageRootPath}/images/blank.png`)
-
-// for (let i = 0; i < broadcasts.length; i++) {
-// 	itemImageMap.push(loadImage(`${imageRootPath}/images/${broadcasts[i].item}${broadcasts[i].item == 'blank' ? '' : `_${litUnlit}`}.png`));
-// 	if (broadcasts[i].item == 'blank') {
-// 		image = await loadImage(`${imageRootPath}/images/empty.png`);
-// 	} else {
-// 		let litUnlit = broadcasts[i].count == 0 ? 'unlit' : 'lit';
-// 		image = await loadImage(`${imageRootPath}/images/${broadcasts[i].item}_${litUnlit}.png`);
-// 	}
-// 	let imageXPosition = 20 + ((i%5) * image.width);
-// 	let imageYPosition = 63 + (image.height * Math.floor(i/5));
-// 	context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
-// 	!(broadcasts[i].count == 0 || broadcasts[i].count == 1) ? context.fillText(broadcasts[i].count.toString(), imageXPosition + 12, imageYPosition + 25) : null;
-// };
 
 const canvas = createCanvas(skeletonData.canvas.width, skeletonData.canvas.height);
 const context = canvas.getContext('2d');
@@ -196,68 +182,6 @@ Promise.all([header1, header2, header3, verticalBorder, horizontalBorder, backgr
 	return canvas.encode('png')
 })
 .then(result => {
-	general.writeFile(`./skeleton.png`, result)
+	writeFile(`./skeleton.png`, result)
 })
 .catch(error => console.log(error));
-
-// var outputAttachment = new AttachmentBuilder(await canvas.encode('png'), {name: `broadcast.png`});
-// await interaction.editReply({
-// 	files: [outputAttachment]
-// });
-
-function formatDate(date) {
-	return [
-	  padTo2Digits(date.getMonth() + 1),
-	  padTo2Digits(date.getDate()),
-	  date.getFullYear(),
-	].join('/');
-}
-
-function padTo2Digits(num) {
-	return num.toString().padStart(2, '0');
-}
-
-function getColorScale(currentTotal, currentCount, dropRate) {
-	const green = '#9aff82';
-	const yellowgreen = '#c4f140';
-	const yellow = '#ffff00';
-	const orange = '#f6b26b';
-	const red = '#e06666';
-
-	const rate = currentCount - currentTotal/dropRate;
-	if (rate <= -1) return red;
-	else if (rate < -0.5) return orange;
-	else if (rate < 0.5) return yellow;
-	else if (rate < 1) return yellowgreen;
-	else return green;
-}
-
-function getSimpleColorScale(currentTotal, expected) {
-	const green = '#9aff82';
-	const yellowgreen = '#c4f140';
-	const yellow = '#ffff00';
-	const orange = '#f6b26b';
-	const red = '#e06666';
-
-	const rate = currentTotal - expected;
-	if (rate <= -1) return red;
-	else if (rate < -0.5) return orange;
-	else if (rate < 0.5) return yellow;
-	else if (rate < 1) return yellowgreen;
-	else return green;
-}
-
-function getExpectedCount (item, userInfo, broadcastList) {
-	var hardExpectedRates = 0;
-	var eliteExpectedRates = 0;
-	var masterExpectedRates = 0;
-	var hardItemFilter = broadcastList.get(1).items.filter(filter => filter.searchString == item);
-	var eliteItemFilter = broadcastList.get(2).items.filter(filter => filter.searchString == item);
-	var masterItemFilter = broadcastList.get(3).items.filter(filter => filter.searchString == item);
-	if (hardItemFilter.length > 0) {
-		hardExpectedRates = userInfo[0].hardClueCount/hardItemFilter[0].dropRate;
-	}
-	if (eliteItemFilter.length > 0) eliteExpectedRates = userInfo[0].eliteClueCount/eliteItemFilter[0].dropRate;
-	if (masterItemFilter.length > 0) masterExpectedRates = userInfo[0].masterClueCount/masterItemFilter[0].dropRate;
-	return hardExpectedRates + eliteExpectedRates + masterExpectedRates;
-}
