@@ -1,19 +1,14 @@
 import {writeFile, numberWithCommas} from './general.js';
 import { GlobalFonts, createCanvas, loadImage, Canvas } from '@napi-rs/canvas';
 import { broadcasts } from './broadcast data.js';
-import { Config, Colors } from './config.ts';
+import { CommunityOpening, Colors } from './config.ts';
 import { get_skeleton_image } from './skeleton.ts';
 import { Image } from '@napi-rs/canvas';
 
-const config: Config = {
-	canvas: {
-		width: 1002
-		, height: 749
-	}, title: 'Clue Chasers Community Log'
-	, filename: '2025 Summer Broadcasts.png'
-};
+CommunityOpening.title = 'Clue Chasers Community Log';
+CommunityOpening.filename = '2025 Summer Broadcasts.png';
 
-const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(config);
+const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityOpening);
 
 // const filename = path.parse(import.meta.filename).name;
 // console.log(`\x1b[48;5;201m\x1b[34;2;145;231;255m${filename}\x1b[0m`);
@@ -365,6 +360,6 @@ Promise.all([Promise.all(itemImageMap)])
 	return canvas.encode('png')
 })
 .then(result => {
-	writeFile(config.filename, result)
+	writeFile(CommunityOpening.filename, result)
 })
 .catch(error => console.log(error));
