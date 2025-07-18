@@ -1,7 +1,8 @@
-import { GlobalFonts, createCanvas, loadImage, Image, Canvas } from '@napi-rs/canvas';
+import { GlobalFonts, loadImage, Image, Canvas } from '@napi-rs/canvas';
 import {writeFile} from './general.js';
 import { get_skeleton_image } from './skeleton.ts';
-import { TextOutput, CommunityLog, Colors, Broadcasts } from './config.ts';
+import { TextOutput, CommunityLog, Colors } from './config.ts';
+import { broadcasts } from './broadcast data.js';
 
 // console.log(path.parse(import.meta.filename));
 // import { broadcasts as broadcastList } from './broadcast data.js';
@@ -40,65 +41,169 @@ const border = {
 	}
 }
 
-const broadcasts: Broadcasts[] = [
-	{item: 'barrows_dye', old: 7198, new: 7619, value: 119472157},
-	{item: 'shadow_dye', old: 4631, new: 4909, value: 1234920706},
-	{item: 'ice_dye', old: 2669, new: 2891, value: 1195010795},
-	{item: 'third_age_dye', old: 829, new: 916, value: 9200000000},
-	{item: 'blood_dye', old: 845, new: 929, value: 10200000000},
-	{item: '3a_melee_helm', old: 210, new: 219, value: 198276390},
-	{item: '3a_melee_top', old: 216, new: 224, value: 523345524},
-	{item: '3a_melee_legs', old: 212, new: 218, value: 885916543},
-	{item: '3a_kiteshield', old: 193, new: 204, value: 198136072},
-	{item: 'backstab_cape', old: 2818, new: 2991, value: 2232446},
-	{item: '3a_mage_hat', old: 203, new: 211, value: 174391342},
-	{item: '3a_mage_top', old: 212, new: 223, value: 231021994},
-	{item: '3a_mage_legs', old: 174, new: 187, value: 178244398},
-	{item: '3a_amulet', old: 241, new: 252, value: 503007539},
-	{item: 'sack_of_effigies', old: 1450, new: 1554, value: 1904388},
-	{item: '3a_coif', old: 202, new: 214, value: 172375978},
-	{item: '3a_range_top', old: 206, new: 213, value: 178701068},
-	{item: '3a_range_legs', old: 185, new: 192, value: 175369432},
-	{item: '3a_range_vambraces', old: 191, new: 198, value: 173059795},
-	{item: 'explosive_barrel', old: 305, new: 317, value: 39981026},
-	{item: 'druidic_wreath', old: 121, new: 138, value: 574681739},
-	{item: 'druidic_top', old: 139, new: 153, value: 217901404},
-	{item: 'druidic_bottom', old: 120, new: 139, value: 171517062},
-	{item: 'druidic_staff', old: 128, new: 138, value: 161262712},
-	{item: 'druidic_cloak', old: 139, new: 148, value: 177745801},
-	{item: '2a_melee_helm', old: 23, new: 26, value: 153802084},
-	{item: '2a_melee_body', old: 28, new: 29, value: 512951577},
-	{item: '2a_melee_legs', old: 29, new: 32, value: 760197568},
-	{item: '2a_melee_sword', old: 93, new: 100, value: 215015769},
-	{item: 'orlando_smith_hat', old: 200, new: 218, value: 15000000000},
-	{item: '2a_mage_helm', old: 22, new: 24, value: 176842716},
-	{item: '2a_mage_body', old: 29, new: 34, value: 712868742},
-	{item: '2a_mage_legs', old: 28, new: 29, value: 719377500},
-	{item: '2a_mage_staff', old: 77, new: 83, value: 236889323},
-	{item: 'blank', old: 0, new: 0, value: 0},
-	{item: '2a_range_coif', old: 28, new: 32, value: 89658487},
-	{item: '2a_range_body', old: 35, new: 38, value: 254542691},
-	{item: '2a_range_legs', old: 31, new: 34, value: 262322527},
-	{item: '2a_range_bow', old: 66, new: 70, value: 243482329},
-];
+broadcasts.delete(`Golden Compass`);
+broadcasts.get(`Barrows dye`).old = 7619;
+broadcasts.get(`Shadow dye`).old = 4909;
+broadcasts.get(`Ice dye`).old = 2891;
+broadcasts.get(`Third Age dye`).old = 916;
+broadcasts.get(`Blood dye`).old = 929;
+broadcasts.get(`Third age full helmet`).old = 219;
+broadcasts.get(`Third age platebody`).old = 224;
+broadcasts.get(`Third age platelegs`).old = 218;
+broadcasts.get(`Third age kiteshield`).old = 204;
+broadcasts.get(`Backstab cape`).old = 2991;
+broadcasts.get(`Third age mage hat`).old = 211;
+broadcasts.get(`Third age robe top`).old = 223;
+broadcasts.get(`Third age robe`).old = 187;
+broadcasts.get(`Third age amulet`).old = 252;
+broadcasts.get(`Sack of effigies`).old = 1554;
+broadcasts.get(`Third age ranger coif`).old = 214;
+broadcasts.get(`Third age ranger body`).old = 213;
+broadcasts.get(`Third age ranger chaps`).old = 192;
+broadcasts.get(`Third age vambraces`).old = 198;
+broadcasts.get(`Explosive barrel`).old = 317;
+broadcasts.get(`Third age druidic wreath`).old = 138;
+broadcasts.get(`Third age druidic robe top`).old = 153;
+broadcasts.get(`Third age druidic robe bottom`).old = 139;
+broadcasts.get(`Third age druidic staff`).old = 138;
+broadcasts.get(`Third age druidic cloak`).old = 148;
+broadcasts.get(`Second-Age full helm`).old = 26;
+broadcasts.get(`Second-Age platebody`).old = 29;
+broadcasts.get(`Second-Age platelegs`).old = 32;
+broadcasts.get(`Second-Age sword`).old = 100;
+broadcasts.get(`Orlando Smith's hat`).old = 218;
+broadcasts.get(`Second-Age mage mask`).old = 24;
+broadcasts.get(`Second-Age robe top`).old = 34;
+broadcasts.get(`Second-Age robe bottom`).old = 29;
+broadcasts.get(`Second-Age staff`).old = 83;
+broadcasts.get(`Blank`).old = 0;
+broadcasts.get(`Second-Age range coif`).old = 32;
+broadcasts.get(`Second-Age range top`).old = 38;
+broadcasts.get(`Second-Age range legs`).old = 34;
+broadcasts.get(`Second-Age bow`).old = 70;
+broadcasts.get(`Barrows dye`).new = 8218;
+broadcasts.get(`Shadow dye`).new = 5269;
+broadcasts.get(`Ice dye`).new = 3109;
+broadcasts.get(`Third Age dye`).new = 1003;
+broadcasts.get(`Blood dye`).new = 1014;
+broadcasts.get(`Third age full helmet`).new = 230;
+broadcasts.get(`Third age platebody`).new = 243;
+broadcasts.get(`Third age platelegs`).new = 233;
+broadcasts.get(`Third age kiteshield`).new = 219;
+broadcasts.get(`Backstab cape`).new = 3203;
+broadcasts.get(`Third age mage hat`).new = 223;
+broadcasts.get(`Third age robe top`).new = 243;
+broadcasts.get(`Third age robe`).new = 201;
+broadcasts.get(`Third age amulet`).new = 266;
+broadcasts.get(`Sack of effigies`).new = 1681;
+broadcasts.get(`Third age ranger coif`).new = 225;
+broadcasts.get(`Third age ranger body`).new = 227;
+broadcasts.get(`Third age ranger chaps`).new = 209;
+broadcasts.get(`Third age vambraces`).new = 211;
+broadcasts.get(`Explosive barrel`).new = 334;
+broadcasts.get(`Third age druidic wreath`).new = 146;
+broadcasts.get(`Third age druidic robe top`).new = 163;
+broadcasts.get(`Third age druidic robe bottom`).new = 151;
+broadcasts.get(`Third age druidic staff`).new = 150;
+broadcasts.get(`Third age druidic cloak`).new = 167;
+broadcasts.get(`Second-Age full helm`).new = 26;
+broadcasts.get(`Second-Age platebody`).new = 29;
+broadcasts.get(`Second-Age platelegs`).new = 33;
+broadcasts.get(`Second-Age sword`).new = 111;
+broadcasts.get(`Orlando Smith's hat`).new = 233;
+broadcasts.get(`Second-Age mage mask`).new = 27;
+broadcasts.get(`Second-Age robe top`).new = 35;
+broadcasts.get(`Second-Age robe bottom`).new = 31;
+broadcasts.get(`Second-Age staff`).new = 90;
+broadcasts.get(`Blank`).new = 0;
+broadcasts.get(`Second-Age range coif`).new = 35;
+broadcasts.get(`Second-Age range top`).new = 40;
+broadcasts.get(`Second-Age range legs`).new = 37;
+broadcasts.get(`Second-Age bow`).new = 78;
+broadcasts.get(`Barrows dye`).value = 125621409;
+broadcasts.get(`Shadow dye`).value = 1249394767;
+broadcasts.get(`Ice dye`).value = 1066048900;
+broadcasts.get(`Third Age dye`).value = 9200000000;
+broadcasts.get(`Blood dye`).value = 10200000000;
+broadcasts.get(`Third age full helmet`).value = 216339944;
+broadcasts.get(`Third age platebody`).value = 539002368;
+broadcasts.get(`Third age platelegs`).value = 893787051;
+broadcasts.get(`Third age kiteshield`).value = 230796326;
+broadcasts.get(`Backstab cape`).value = 2231342;
+broadcasts.get(`Third age mage hat`).value = 195604438;
+broadcasts.get(`Third age robe top`).value = 246328640;
+broadcasts.get(`Third age robe`).value = 198022400;
+broadcasts.get(`Third age amulet`).value = 535246611;
+broadcasts.get(`Sack of effigies`).value = 1949659;
+broadcasts.get(`Third age ranger coif`).value = 193249335;
+broadcasts.get(`Third age ranger body`).value = 192126048;
+broadcasts.get(`Third age ranger chaps`).value = 188589673;
+broadcasts.get(`Third age vambraces`).value = 195920181;
+broadcasts.get(`Explosive barrel`).value = 41623072;
+broadcasts.get(`Third age druidic wreath`).value = 547145127;
+broadcasts.get(`Third age druidic robe top`).value = 227175924;
+broadcasts.get(`Third age druidic robe bottom`).value = 186575013;
+broadcasts.get(`Third age druidic staff`).value = 175691684;
+broadcasts.get(`Third age druidic cloak`).value = 193334916;
+broadcasts.get(`Second-Age full helm`).value = 153802084;
+broadcasts.get(`Second-Age platebody`).value = 534532453;
+broadcasts.get(`Second-Age platelegs`).value = 793611791;
+broadcasts.get(`Second-Age sword`).value = 215015769;
+broadcasts.get(`Orlando Smith's hat`).value = 15000000000;
+broadcasts.get(`Second-Age mage mask`).value = 176842716;
+broadcasts.get(`Second-Age robe top`).value = 702393889;
+broadcasts.get(`Second-Age robe bottom`).value = 719377500;
+broadcasts.get(`Second-Age staff`).value = 236889323;
+broadcasts.get(`Blank`).value = 0;
+broadcasts.get(`Second-Age range coif`).value = 89658487;
+broadcasts.get(`Second-Age range top`).value = 254542691;
+broadcasts.get(`Second-Age range legs`).value = 270877801;
+broadcasts.get(`Second-Age bow`).value = 253547630;
 
-var realityCheck = [
-	{name: 'Barrows dye', onLog: 0, expected: 0},
-	{name: 'Shadow dye', onLog: 0, expected: 0},
-	{name: 'Ice dye', onLog: 0, expected: 0},
-	{name: 'Third age dye', onLog: 0, expected: 0},
-	{name: 'Blood dye', onLog: 0, expected: 0},
-	{name: 'Backstab cape', onLog: 0, expected: 0},
-	{name: 'Sack of effigies', onLog: 0, expected: 0},
-	{name: 'Third age', onLog: 0, expected: 0},
-	{name: 'Third age druidic', onLog: 0, expected: 0},
-	{name: 'Second-Age', onLog: 0, expected: 0},
-	{name: 'Explosive barrel', onLog: 0, expected: 0},
-	{name: "Orlando Smith's hat", onLog: 0, expected: 0}
-];
+// const broadcasts: Broadcasts[] = [
+// 	{item: 'barrows_dye', old: 7198, new: 7619, value: 119472157},
+// 	{item: 'shadow_dye', old: 4631, new: 4909, value: 1234920706},
+// 	{item: 'ice_dye', old: 2669, new: 2891, value: 1195010795},
+// 	{item: 'third_age_dye', old: 829, new: 916, value: 9200000000},
+// 	{item: 'blood_dye', old: 845, new: 929, value: 10200000000},
+// 	{item: '3a_melee_helm', old: 210, new: 219, value: 198276390},
+// 	{item: '3a_melee_top', old: 216, new: 224, value: 523345524},
+// 	{item: '3a_melee_legs', old: 212, new: 218, value: 885916543},
+// 	{item: '3a_kiteshield', old: 193, new: 204, value: 198136072},
+// 	{item: 'backstab_cape', old: 2818, new: 2991, value: 2232446},
+// 	{item: '3a_mage_hat', old: 203, new: 211, value: 174391342},
+// 	{item: '3a_mage_top', old: 212, new: 223, value: 231021994},
+// 	{item: '3a_mage_legs', old: 174, new: 187, value: 178244398},
+// 	{item: '3a_amulet', old: 241, new: 252, value: 503007539},
+// 	{item: 'sack_of_effigies', old: 1450, new: 1554, value: 1904388},
+// 	{item: '3a_coif', old: 202, new: 214, value: 172375978},
+// 	{item: '3a_range_top', old: 206, new: 213, value: 178701068},
+// 	{item: '3a_range_legs', old: 185, new: 192, value: 175369432},
+// 	{item: '3a_range_vambraces', old: 191, new: 198, value: 173059795},
+// 	{item: 'explosive_barrel', old: 305, new: 317, value: 39981026},
+// 	{item: 'druidic_wreath', old: 121, new: 138, value: 574681739},
+// 	{item: 'druidic_top', old: 139, new: 153, value: 217901404},
+// 	{item: 'druidic_bottom', old: 120, new: 139, value: 171517062},
+// 	{item: 'druidic_staff', old: 128, new: 138, value: 161262712},
+// 	{item: 'druidic_cloak', old: 139, new: 148, value: 177745801},
+// 	{item: '2a_melee_helm', old: 23, new: 26, value: 153802084},
+// 	{item: '2a_melee_body', old: 28, new: 29, value: 512951577},
+// 	{item: '2a_melee_legs', old: 29, new: 32, value: 760197568},
+// 	{item: '2a_melee_sword', old: 93, new: 100, value: 215015769},
+// 	{item: 'orlando_smith_hat', old: 200, new: 218, value: 15000000000},
+// 	{item: '2a_mage_helm', old: 22, new: 24, value: 176842716},
+// 	{item: '2a_mage_body', old: 29, new: 34, value: 712868742},
+// 	{item: '2a_mage_legs', old: 28, new: 29, value: 719377500},
+// 	{item: '2a_mage_staff', old: 77, new: 83, value: 236889323},
+// 	{item: 'blank', old: 0, new: 0, value: 0},
+// 	{item: '2a_range_coif', old: 28, new: 32, value: 89658487},
+// 	{item: '2a_range_body', old: 35, new: 38, value: 254542691},
+// 	{item: '2a_range_legs', old: 31, new: 34, value: 262322527},
+// 	{item: '2a_range_bow', old: 66, new: 70, value: 243482329},
+// ];
 
-let totalBroadcasts: Number = 0;
-let totalValue: Number = 0;
+let totalBroadcasts: number = 0;
+let totalValue: number = 0;
 const textOutput: TextOutput[] = [];
 
 const context = canvas.getContext('2d');
@@ -116,12 +221,17 @@ imageArray.push(loadImage(`${imageRootPath}/images/cc_horizontal_border3.png`));
 imageArray.push(loadImage(`${imageRootPath}/images/cc_vertical_border3.png`));
 imageArray.push(loadImage(`${imageRootPath}/images/Coins_10000.png`));
 
-for (let i = 0; i < broadcasts.length; i++) {
-	if (!imageMap.has(broadcasts[i].item)) {
-		let litUnlit = broadcasts[i].item.toLowerCase() == 'blank' ? '' : '_lit';
-		imageMap.set(broadcasts[i].item, imageArray.push(loadImage(`${imageRootPath}/images/${broadcasts[i].item}${litUnlit}.png`)) - 1);
-	}
-};
+broadcasts.forEach((value, key) => {
+	let litUnlit = key.toLowerCase() == 'blank' ? '' : '_lit';
+	broadcasts.get(key).index = imageArray.push(loadImage(`${imageRootPath}/images/${value.filename}${litUnlit}.png`)) - 1;
+});
+
+// for (let i = 0; i < broadcasts.size; i++) {
+// 	if (!imageMap.has(broadcasts[i].item)) {
+// 		let litUnlit = broadcasts[i].item.toLowerCase() == 'blank' ? '' : '_lit';
+// 		imageMap.set(broadcasts[i].item, imageArray.push(loadImage(`${imageRootPath}/images/${broadcasts[i].item}${litUnlit}.png`)) - 1);
+// 	}
+// };
 
 Promise.all(imageArray).then(output => {
 	context.drawImage(output[0], border.left.right, border.top.bottom, canvas.width, canvas.height);
@@ -170,34 +280,39 @@ Promise.all(imageArray).then(output => {
 
 	context.font = `27px runescape`
 	context.fillStyle = Colors.yellow;
-		
-	for (i = 0; i < broadcasts.length; i++) {
-		totalBroadcasts += broadcasts[i].new;
-		totalValue += broadcasts[i].new * broadcasts[i].value;
-		let image = output[imageMap.get(broadcasts[i].item)];
-		// var image;
-		// if (broadcasts[i].item == 'blank') {
-		// 	image = await loadImage(`${imageRootPath}/images/empty.png`);
-		// } else {
-		// 	let litUnlit = broadcasts[i].old == 0 ? 'unlit' : 'lit';
-		// 	image = await loadImage(`${imageRootPath}/images/${broadcasts[i].item}_${litUnlit}.png`);
-		// }
-		let imageXPosition = border.broadcast.old.left + 4 + ((i%5) * image.width);
-		let imageYPosition = border.broadcast.old.top + 34 + (image.height * Math.floor(i/5));
+
+	let index: number = 0;
+	broadcasts.forEach((value, key) => {
+		totalBroadcasts += value.new;
+		totalValue += value.new * value.value;
+		let image = output[value.index];
+		let imageXPosition = border.broadcast.old.left + 4 + ((index%5) * image.width);
+		let imageYPosition = border.broadcast.old.top + 34 + (image.height * Math.floor(index/5));
+		console.log(imageXPosition, imageYPosition, image.width, image.height)
 		context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
-		!(broadcasts[i].old == 0 || broadcasts[i].old == 1) ? context.fillText(broadcasts[i].old.toString(), imageXPosition + 12, imageYPosition + 25) : null;
+		!(value.old == 0 || value.old == 1) ? context.fillText(value.old.toString(), imageXPosition + 12, imageYPosition + 25) : null;
 		
-		// if (broadcasts[i].item == 'blank') {
-		// 	image = await loadImage(`${imageRootPath}/images/empty.png`);
-		// } else {
-		// 	let litUnlit = broadcasts[i].new == 0 ? 'unlit' : 'lit';
-		// 	image = await loadImage(`${imageRootPath}/images/${broadcasts[i].item}_${litUnlit}.png`);
-		// }
-		imageXPosition = border.broadcast.new.left + 4 + ((i%5) * image.width);
-		imageYPosition = border.broadcast.new.top + 34 + (image.height * Math.floor(i/5));
+		imageXPosition = border.broadcast.new.left + 4 + ((index%5) * image.width);
+		imageYPosition = border.broadcast.new.top + 34 + (image.height * Math.floor(index/5));
 		context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
-		!(broadcasts[i].new == 0 || broadcasts[i].new == 1) ? context.fillText(broadcasts[i].new.toString(), imageXPosition + 12, imageYPosition + 25) : null;
-	};
+		!(value.new == 0 || value.new == 1) ? context.fillText(value.new.toString(), imageXPosition + 12, imageYPosition + 25) : null;
+		index++;
+	});
+		
+	// for (i = 0; i < broadcasts.size; i++) {
+	// 	totalBroadcasts += broadcasts[i].new;
+	// 	totalValue += broadcasts[i].new * broadcasts[i].value;
+	// 	let image = output[imageMap.get(broadcasts[i].item)];
+	// 	let imageXPosition = border.broadcast.old.left + 4 + ((i%5) * image.width);
+	// 	let imageYPosition = border.broadcast.old.top + 34 + (image.height * Math.floor(i/5));
+	// 	context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
+	// 	!(broadcasts[i].old == 0 || broadcasts[i].old == 1) ? context.fillText(broadcasts[i].old.toString(), imageXPosition + 12, imageYPosition + 25) : null;
+		
+	// 	imageXPosition = border.broadcast.new.left + 4 + ((i%5) * image.width);
+	// 	imageYPosition = border.broadcast.new.top + 34 + (image.height * Math.floor(i/5));
+	// 	context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
+	// 	!(broadcasts[i].new == 0 || broadcasts[i].new == 1) ? context.fillText(broadcasts[i].new.toString(), imageXPosition + 12, imageYPosition + 25) : null;
+	// };
 	
 	context.drawImage(output[6], border.broadcast.old.left + 10, 855, 40, 40);
 	context.drawImage(output[6], border.broadcast.new.left + 10, 855, 40, 40);
@@ -394,9 +509,9 @@ Promise.all(imageArray).then(output => {
 	// });
 
 	textOutput.forEach((value, key) => {	
-		context.font = value.font as string
-		context.fillStyle = value.fillStyle as string;
-		context.fillText(value.text as string, value.xPosition as number, value.yPosition as number);
+		context.font = value.font;
+		context.fillStyle = value.fillStyle;
+		context.fillText(value.text, value.xPosition, value.yPosition);
 	});
 
 	return canvas.encode('png');

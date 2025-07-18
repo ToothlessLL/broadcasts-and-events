@@ -1,8 +1,8 @@
 export interface Canvas {
-    width: Number;
-    height: Number;
-    title: String;
-    filename: String;
+    width: number;
+    height: number;
+    title: string;
+    filename: string;
 }
 
 export const CommunityLog: Canvas = {
@@ -30,11 +30,11 @@ export const Colors = {
 }
 
 export class TextOutput {
-    text: String;
-    fillStyle: String;
-    font: String;
-    xPosition: Number;
-    yPosition: Number;
+    text: string;
+    fillStyle: string;
+    font: string;
+    xPosition: number;
+    yPosition: number;
 }
 
 export const ClueTitles = {
@@ -60,8 +60,8 @@ export const ClueTitles = {
 }
 
 export interface Broadcasts {
-    item: String;
-    old: Number;
-    new: Number;
-    value: Number;
+    item: string;
+    old: number;
+    new: number;
+    value: number;
 }

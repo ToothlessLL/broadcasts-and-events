@@ -1,6 +1,7 @@
 import {writeFile} from './general.js';
 import { GlobalFonts, createCanvas, loadImage, Canvas } from '@napi-rs/canvas';
-import { Config, Colors } from './config.ts';
+import { Colors } from './config.ts';
+import type {Canvas as CanvasConfig} from './config.ts';
 
 //loading custom fonts
 const clueTitles = {
@@ -103,7 +104,7 @@ GlobalFonts.registerFromPath(`./Fonts/trajan-pro/TrajanPro-Regular.ttf`, 'trajan
 // let title = '2024 Clue Summer Spectacle Opening Log';
 // context.fillText(title, 100, 42);
 
-export async function get_skeleton_image(config: Config): Promise<Canvas> {
+export async function get_skeleton_image(config: CanvasConfig): Promise<Canvas> {
 	const imageRootPath = '.';
 	const header1 = loadImage(`${imageRootPath}/images/header1.png`);
 	const header2 = loadImage(`${imageRootPath}/images/header2.png`);
@@ -112,7 +113,7 @@ export async function get_skeleton_image(config: Config): Promise<Canvas> {
 	const horizontalBorder = loadImage(`${imageRootPath}/images/horizontal_border.png`);
 	const backgroundImage = loadImage(`${imageRootPath}/images/blank.png`)
 	
-	const canvas = createCanvas(config.canvas.width as number, config.canvas.height as number);
+	const canvas = createCanvas(config.width as number, config.height as number);
 	const context = canvas.getContext('2d');
 
 	await Promise.all([header1, header2, header3, verticalBorder, horizontalBorder, backgroundImage])

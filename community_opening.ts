@@ -1,7 +1,7 @@
 import {writeFile, numberWithCommas} from './general.js';
 import { GlobalFonts, createCanvas, loadImage, Canvas } from '@napi-rs/canvas';
 import { broadcasts } from './broadcast data.js';
-import { CommunityOpening, Colors } from './config.ts';
+import { CommunityOpening, Colors, ClueTitles } from './config.ts';
 import { get_skeleton_image } from './skeleton.ts';
 import { Image } from '@napi-rs/canvas';
 
@@ -14,28 +14,6 @@ const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityOpeni
 // console.log(`\x1b[48;5;201m\x1b[34;2;145;231;255m${filename}\x1b[0m`);
 
 // loading custom fonts
-
-const clueTitles = {
-	easy: {
-		base: '#E8C502'
-		, title: 'the Gold Digger'
-	}, medium: {
-		base: '#3294D0'
-		, title: 'Clueless'
-	}, hards: {
-		base: '#A227BA'
-		, golden: '#E4A604'
-		, title: 'Double Agent'
-	}, elites: {
-		base: '#005D02'
-		, golden: '#E4A604'
-		, title: 'the Clue Chaser'
-	}, masters: {
-		base: '#B70337'
-		, golden: '#E4A604'
-		, title: 'Master of Clues'
-	}
-}
 
 GlobalFonts.registerFromPath(`./Fonts/trajan-pro\\TrajanPro-Regular.ttf`, 'trajan pro');
 GlobalFonts.registerFromPath(`.\\Fonts\\runescape_uf\\runescape_uf.ttf`, 'runescape');
@@ -282,20 +260,20 @@ Promise.all([Promise.all(itemImageMap)])
 	// title = `${clueTitles.easy.title}: ${names}`;
 	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
 
-	context.fillStyle = clueTitles.easy.base;
-	title = clueTitles.easy.title;
+	context.fillStyle = ClueTitles.easy.base;
+	title = ClueTitles.easy.title;
 	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = clueTitles.easy.base;
+	context.strokeStyle = ClueTitles.easy.base;
 	context.beginPath();
 	context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
 	context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
 	context.stroke();
 
 
-	context.fillStyle = clueTitles.hards.base;
-	title = clueTitles.hards.title;
+	context.fillStyle = ClueTitles.hards.base;
+	title = ClueTitles.hards.title;
 	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = clueTitles.hards.base;
+	context.strokeStyle = ClueTitles.hards.base;
 	context.beginPath();
 	context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
 	context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
@@ -321,20 +299,20 @@ Promise.all([Promise.all(itemImageMap)])
 
 	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
 
-	context.fillStyle = clueTitles.elites.base;
-	title = clueTitles.elites.title;
+	context.fillStyle = ClueTitles.elites.base;
+	title = ClueTitles.elites.title;
 	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = clueTitles.elites.base;
+	context.strokeStyle = ClueTitles.elites.base;
 	context.beginPath();
 	context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
 	context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
 	context.stroke();
 
 
-	context.fillStyle = clueTitles.masters.base;
-	title = clueTitles.masters.title;
+	context.fillStyle = ClueTitles.masters.base;
+	title = ClueTitles.masters.title;
 	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = clueTitles.masters.base;
+	context.strokeStyle = ClueTitles.masters.base;
 	context.beginPath();
 	context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
 	context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
