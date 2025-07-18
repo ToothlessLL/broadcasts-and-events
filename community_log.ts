@@ -332,7 +332,7 @@ Promise.all(imageArray).then(output => {
 	
 	context.font = '25px trajan pro'
 	textOutput.push({
-		text: 'LAST UPDATED DEC. 31TH 2024'
+		text: 'LAST UPDATED DEC. 31ST 2024'
 		, fillStyle: Colors.red
 		, font: '25px trajan pro'
 		, xPosition: (border.broadcast.old.right + border.broadcast.old.left)/2 - context.measureText('LAST UPDATED FEB. 25TH 2023').width/2
