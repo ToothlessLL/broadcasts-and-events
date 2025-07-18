@@ -1,5 +1,5 @@
-import { GlobalFonts, loadImage, Image, Canvas } from '@napi-rs/canvas';
-import {writeFile} from './general.js';
+import { GlobalFonts, loadImage, Image, Canvas, createCanvas } from '@napi-rs/canvas';
+import {writeFile, numberWithCommas} from './general.js';
 import { get_skeleton_image } from './skeleton.ts';
 import { TextOutput, CommunityLog, Colors } from './config.ts';
 import { broadcasts } from './broadcast data.js';
@@ -9,8 +9,16 @@ import { broadcasts } from './broadcast data.js';
 
 CommunityLog.filename = '2025 CC broadcasts summer.png';
 CommunityLog.title = 'Clue Chasers Community Log';
+const stats = {
+	broadcasts: {
+		old: 0
+		, new: 0
+	}
+	, previous_gp: 39213525414157
+	, gp_gained: 2979671111671
+}
 
-const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityLog);
+// const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityLog);
 
 const imageRootPath = '.';
 
@@ -41,7 +49,10 @@ const border = {
 	}
 }
 
+// delete golden compass
 broadcasts.delete(`Golden Compass`);
+
+//get old data
 broadcasts.get(`Barrows dye`).old = 7619;
 broadcasts.get(`Shadow dye`).old = 4909;
 broadcasts.get(`Ice dye`).old = 2891;
@@ -81,6 +92,8 @@ broadcasts.get(`Second-Age range coif`).old = 32;
 broadcasts.get(`Second-Age range top`).old = 38;
 broadcasts.get(`Second-Age range legs`).old = 34;
 broadcasts.get(`Second-Age bow`).old = 70;
+
+//get new data
 broadcasts.get(`Barrows dye`).new = 8218;
 broadcasts.get(`Shadow dye`).new = 5269;
 broadcasts.get(`Ice dye`).new = 3109;
@@ -120,6 +133,8 @@ broadcasts.get(`Second-Age range coif`).new = 35;
 broadcasts.get(`Second-Age range top`).new = 40;
 broadcasts.get(`Second-Age range legs`).new = 37;
 broadcasts.get(`Second-Age bow`).new = 78;
+
+//get prices
 broadcasts.get(`Barrows dye`).value = 125621409;
 broadcasts.get(`Shadow dye`).value = 1249394767;
 broadcasts.get(`Ice dye`).value = 1066048900;
@@ -202,17 +217,15 @@ broadcasts.get(`Second-Age bow`).value = 253547630;
 // 	{item: '2a_range_bow', old: 66, new: 70, value: 243482329},
 // ];
 
-let totalBroadcasts: number = 0;
-let totalValue: number = 0;
 const textOutput: TextOutput[] = [];
 
+const canvas = createCanvas(CommunityLog.width, CommunityLog.height);
 const context = canvas.getContext('2d');
 // context.fillStyle = Colors.yellow;
 // context.fillRect(0,0,canvas.width,canvas.height);
 
 // let backgroundImage = await loadImage(`${imageRootPath}/images/empty.png`);
 const imageArray: Promise<Image>[] = [];
-const imageMap = new Map();
 imageArray.push(loadImage(`${imageRootPath}/images/blank.png`));
 imageArray.push(loadImage(`${imageRootPath}/images/cc_background_new4.png`));
 imageArray.push(loadImage(`${imageRootPath}/images/cc_background_new5.png`));
@@ -283,12 +296,12 @@ Promise.all(imageArray).then(output => {
 
 	let index: number = 0;
 	broadcasts.forEach((value, key) => {
-		totalBroadcasts += value.new;
-		totalValue += value.new * value.value;
+		stats.broadcasts.old += value.old;
+		stats.broadcasts.new += value.new;
+		// stats.value.new += (value.new - value.old) * value.value;
 		let image = output[value.index];
 		let imageXPosition = border.broadcast.old.left + 4 + ((index%5) * image.width);
 		let imageYPosition = border.broadcast.old.top + 34 + (image.height * Math.floor(index/5));
-		console.log(imageXPosition, imageYPosition, image.width, image.height)
 		context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
 		!(value.old == 0 || value.old == 1) ? context.fillText(value.old.toString(), imageXPosition + 12, imageYPosition + 25) : null;
 		
@@ -319,15 +332,16 @@ Promise.all(imageArray).then(output => {
 	
 	context.font = '25px trajan pro'
 	textOutput.push({
-		text: 'LAST UPDATED JUN. 30TH 2024'
+		text: 'LAST UPDATED DEC. 31TH 2024'
 		, fillStyle: Colors.red
 		, font: '25px trajan pro'
 		, xPosition: (border.broadcast.old.right + border.broadcast.old.left)/2 - context.measureText('LAST UPDATED FEB. 25TH 2023').width/2
 		, yPosition: output[1].height + 15
 	});
 
+	
 	textOutput.push({
-		text: '36,102,064,858,004'
+		text: numberWithCommas(stats.previous_gp)
 		, fillStyle: Colors.gpColor
 		, font: '40px trajan pro'
 		, xPosition: border.broadcast.old.left + 10 + 40 + 10
@@ -335,18 +349,19 @@ Promise.all(imageArray).then(output => {
 	});
 
 	textOutput.push({
-		text: '39,213,525,414,157'
+		text: numberWithCommas(stats.previous_gp + stats.gp_gained)
 		, fillStyle: Colors.gpColor
 		, font: '40px trajan pro'
 		, xPosition: border.broadcast.new.left + 10 + 40 + 10
 		, yPosition: 885
 	});
 
+	title = 'UPDATED LOG JUN. 30TH 2025';
 	textOutput.push({
-		text: 'UPDATED LOG DEC. 31ST 2024'
+		text: title
 		, fillStyle: Colors.lightGreen
 		, font: '25px trajan pro'
-		, xPosition: (border.broadcast.new.right + border.broadcast.new.left)/2 - context.measureText('UPDATED LOG JUN. 30TH 2024').width/2
+		, xPosition: (border.broadcast.new.right + border.broadcast.new.left)/2 - context.measureText(title).width/2
 		, yPosition: output[1].height + 15
 	});
 		
@@ -366,10 +381,9 @@ Promise.all(imageArray).then(output => {
 	context.font = currentFont
 
 	let sectionSpace = 70;
-	let lineSpace = 40;
 	let leftTextPadding = 12;
 
-	title = `Total number of broadcasts: 26,146`
+	title = `Total number of broadcasts: ${numberWithCommas(stats.broadcasts.new)}`;
 	textOutput.push({
 		text: title
 		, fillStyle: Colors.yellow
@@ -387,7 +401,7 @@ Promise.all(imageArray).then(output => {
 	// });
 
 	textOutput.push({
-		text: `GP gained since last update: 3,111,460,556,153`
+		text: `GP gained since last update: ${numberWithCommas(stats.gp_gained)}`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -395,7 +409,7 @@ Promise.all(imageArray).then(output => {
 	});
 
 	textOutput.push({
-		text: `Highest Broadcast Month: December 2024 (426)`
+		text: `Highest Broadcast Month: June (506)`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -403,7 +417,7 @@ Promise.all(imageArray).then(output => {
 	});
 
 	textOutput.push({
-		text: `Lowest Broadcast Month: November 2024 (202)`
+		text: `Lowest Broadcast Month: February (243)`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -419,7 +433,7 @@ Promise.all(imageArray).then(output => {
 	});
 
 	textOutput.push({
-		text: `Least Common Drop: Second-Age platebody, Second-Age robe bottom`
+		text: `Least Common Drop: Second-Age full helm, Second-Age platebody`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -443,7 +457,7 @@ Promise.all(imageArray).then(output => {
 	// });
 
 	textOutput.push({
-		text: `Orlando Smith's Hat Proc Broadcasts: 7`
+		text: `Orlando Smith's Hat Proc Broadcasts: 10`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -451,7 +465,7 @@ Promise.all(imageArray).then(output => {
 	});
 
 	textOutput.push({
-		text: `Double Broadcasts: 6`
+		text: `Double Broadcasts: 5`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -467,7 +481,7 @@ Promise.all(imageArray).then(output => {
 	// });
 
 	textOutput.push({
-		text: `Player with the most Broadcasts in 1 month: Elba (47), December 2024`
+		text: `Player with the most Broadcasts in 1 month: Tcf99 (320), June 2025`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
@@ -483,14 +497,14 @@ Promise.all(imageArray).then(output => {
 	// });
 
 	textOutput.push({
-		text: `Player with most Broadcasts: Elba (82)`
+		text: `Player with most Broadcasts: Tcf99 (320)`
 		, fillStyle: Colors.yellow
 		, font: currentFont
 		, xPosition: border.broadcast.new.right + leftTextPadding
 		, yPosition: currentHeight += sectionSpace
 	});
 
-	title = 'Number of days without a SINGLE broadcast posted: 3'
+	title = 'Number of days without a SINGLE broadcast posted: 4'
 	textOutput.push({
 		text: title
 		, fillStyle: Colors.yellow
