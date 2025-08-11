@@ -50,7 +50,7 @@ export const ClueTitles = {
             , list: []
         }
 		, title: 'Clueless'
-	}, hards: {
+	}, hard: {
 		base: {
             color: '#A227BA'
             , list: []
@@ -60,7 +60,7 @@ export const ClueTitles = {
             , list: []
         }
 		, title: 'Double Agent'
-	}, elites: {
+	}, elite: {
 		base: {
             color: '#005D02'
             , list: []
@@ -70,7 +70,7 @@ export const ClueTitles = {
             , list: []
         }
 		, title: 'the Clue Chaser'
-	}, masters: {
+	}, master: {
 		base: {
             color: '#B70337'
             , list: []

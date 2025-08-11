@@ -70,6 +70,17 @@ const totalCaskets = 175053;
 const totalParticipants = 78;
 doubleBroadcasts.push({name: 'Drashie', item1: 'Blood dye', item2: 'Barrows dye'});
 doubleBroadcasts.push({name: 'Elba', item1: 'Ice dye', item2: 'Shadow dye'});
+ClueTitles.elite.golden.list.push('Elba');
+ClueTitles.easy.base.list.push('Luckyluke91');
+ClueTitles.elite.base.list.push('beausz');
+ClueTitles.easy.base.list.push('Klungeltje');
+ClueTitles.hard.base.list.push('Emma Watson');
+ClueTitles.master.base.list.push('Holy Fig');
+ClueTitles.master.base.list.push('Solstice Sun');
+ClueTitles.hard.base.list.push('D Hansson');
+ClueTitles.medium.base.list.push('Mackenzie');
+ClueTitles.elite.base.list.push('Takiji');
+ClueTitles.easy.base.list.push('ChemTrailed');
 
 const textCenter = 750;
 const textStart = 490;
