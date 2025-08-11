@@ -39,24 +39,57 @@ export class TextOutput {
 
 export const ClueTitles = {
 	easy: {
-		base: '#E8C502'
+		base: {
+            color: '#E8C502'
+            , list: []
+        }
 		, title: 'the Gold Digger'
 	}, medium: {
-		base: '#3294D0'
+		base: {
+            color: '#3294D0'
+            , list: []
+        }
 		, title: 'Clueless'
 	}, hards: {
-		base: '#A227BA'
-		, golden: '#E4A604'
+		base: {
+            color: '#A227BA'
+            , list: []
+        }
+		, golden: {
+            color: '#E4A604'
+            , list: []
+        }
 		, title: 'Double Agent'
 	}, elites: {
-		base: '#005D02'
-		, golden: '#E4A604'
+		base: {
+            color: '#005D02'
+            , list: []
+        }
+		, golden: {
+            color: '#E4A604'
+            , list: []
+        }
 		, title: 'the Clue Chaser'
 	}, masters: {
-		base: '#B70337'
-		, golden: '#E4A604'
+		base: {
+            color: '#B70337'
+            , list: []
+        }
+		, golden: {
+            color: '#E4A604'
+            , list: []
+        }
 		, title: 'Master of Clues'
 	}
+}
+
+export function getGPColor(value: bigint): string {
+    if (value < BigInt(100000)) return '#EBEC03';
+    else if (value < BigInt(10000000)) return '#BFC0C1';
+    else if (value < BigInt(10000000000)) return '#1BD005';
+    else if (value < BigInt(10000000000000)) return '#6698FF';
+    else if (value < BigInt('10000000000000000')) return '#9A34E1';
+    else return '#C3690D';
 }
 
 export interface Broadcasts {

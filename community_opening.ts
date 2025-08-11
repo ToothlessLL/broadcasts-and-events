@@ -1,7 +1,7 @@
 import {writeFile, numberWithCommas} from './general.js';
 import { GlobalFonts, createCanvas, loadImage, Canvas } from '@napi-rs/canvas';
 import { broadcasts } from './broadcast data.js';
-import { CommunityOpening, Colors, ClueTitles } from './config.ts';
+import { CommunityOpening, Colors, ClueTitles, TextOutput, getGPColor } from './config.ts';
 import { get_skeleton_image } from './skeleton.ts';
 import { Image } from '@napi-rs/canvas';
 
@@ -75,7 +75,7 @@ const textCenter = 750;
 const textStart = 490;
 const padding = 20;
 let totalBroadcasts = 0;
-let totalValue = 0;
+let totalValue: bigint = BigInt(0);
 
 // const imageRootPath = '.';
 // const imageBase = loadImage(`${imageRootPath}/skeleton.png`);
@@ -90,23 +90,46 @@ broadcasts.forEach((value, key) => {
 	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
 	itemMap.set(index, key);
 	totalBroadcasts += value.data.count;
-	totalValue += value.data.count * value.data.value;
+	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
 });
 
 Promise.all([Promise.all(itemImageMap)])
 .then(result => {
 	const images = result[0];
 	const context = canvas.getContext('2d');
+	const textOutput: TextOutput[] = [];
+
+	const textConfig: TextOutput = {
+		font: ''
+		, text: ''
+		, fillStyle: ''
+		, xPosition: 0
+		, yPosition: 0
+	};
+
+	const tempTextConfig : TextOutput = {
+		font: ''
+		, text: ''
+		, fillStyle: ''
+		, xPosition: 0
+		, yPosition: 0
+	};
 	
-	context.font = `27px runescape`
-	context.fillStyle = Colors.yellow;
+	textConfig.font =  `27px runescape`;
+	textConfig.fillStyle = Colors.yellow;
+	context.font = textConfig.font;
+	context.fillStyle = textConfig.fillStyle;
 	images.forEach((image, key) => {
 		// let name = imageMetadata.get(key);
 		let imageXPosition = 20 + ((key%itemsPerRow) * image.width);
 		let imageYPosition = 63 + (image.height * Math.floor(key/itemsPerRow));
 		context.drawImage(image, imageXPosition, imageYPosition, image.width, image.height);
+		textConfig.text = broadcasts.get(itemMap.get(key)).data.count.toString();
+		textConfig.xPosition = imageXPosition + 12;
+		textConfig.yPosition = imageYPosition + 25;
 		// !(broadcastList[key].count == 0 || broadcastList[key].count == 1) ? context.fillText(broadcastList[key].count.toString(), imageXPosition + 12, imageYPosition + 25) : null;
 		!(broadcasts.get(itemMap.get(key)).data.count == 0 || broadcasts.get(itemMap.get(key)).data.count == 1) ? context.fillText(broadcasts.get(itemMap.get(key)).data.count.toString(), imageXPosition + 12, imageYPosition + 25) : null;
+		!(broadcasts.get(itemMap.get(key)).data.count == 0 || broadcasts.get(itemMap.get(key)).data.count == 1) ? textOutput.push(textConfig) : null;
 	});
 
 	// context.font = '25px runescape';
@@ -114,80 +137,150 @@ Promise.all([Promise.all(itemImageMap)])
 	// let title = '2024 Clue Chasers Winter Opening Log'.toUpperCase();
 	// context.fillText(title, 100, 42);
 
-	context.font = '20px trajan pro';
-	context.fillStyle = Colors.yellow;
+	textConfig.font = '20px trajan pro';
+	context.font = textConfig.font;
+	textConfig.fillStyle = Colors.yellow;
+	context.fillStyle = textConfig.fillStyle;
 	let currentHeight = 86;
-	let title = `Total caskets opened: ${numberWithCommas(totalCaskets)}`;
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
-	context.fillStyle = Colors.yellow;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding
-	title = `Total participants: ${numberWithCommas(totalParticipants)}`;
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
-	title = `Total broadcasts: ${numberWithCommas(totalBroadcasts)}`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
-	title = `Total value: ${numberWithCommas(totalValue)}`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillText(`Total value: `, textCenter - context.measureText(title).width/2, currentHeight);
-	context.fillStyle = '#4C77C4';
-	context.fillText(numberWithCommas(totalValue), textCenter - context.measureText(title).width/2 + context.measureText(`Total value: `).width, currentHeight);
-	title = `Top 3 GP earned`;
-	context.fillStyle = Colors.ivory;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
+	textConfig.text = `Total caskets opened: ${numberWithCommas(totalCaskets)}`;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.yPosition = currentHeight;
+	// context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
+	textOutput.push({...textConfig});
+
+	textConfig.text = `Total participants: ${numberWithCommas(totalParticipants)}`;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+
+	textConfig.text = `Total broadcasts: ${numberWithCommas(totalBroadcasts)}`;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+
+	textConfig.text = `Total value: ${numberWithCommas(totalValue)}`;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.yPosition = currentHeight;
+	textConfig.text = `Total value: `;
+	textOutput.push({...textConfig});
+	tempTextConfig.text = textConfig.text;
+	textConfig.fillStyle = getGPColor(totalValue);
+	textConfig.text = totalValue.toLocaleString('en-US');
+	textConfig.xPosition = textCenter - context.measureText(`${tempTextConfig.text}${textConfig.text}`).width/2 + context.measureText(tempTextConfig.text).width;
+	textOutput.push({...textConfig});
+
+	// context.fillText(`Total value: `, textCenter - context.measureText(title).width/2, currentHeight);
+	// textConfig.fillStyle = getGPColor(totalValue);
+	// textConfig.text = totalValue.toLocaleString('en-US');
+	// textConfig.xPosition = textCenter - context.measureText(title).width/2 + context.measureText(`Total value: `).width;
+	// context.fillText(numberWithCommas(totalValue), textCenter - context.measureText(title).width/2 + context.measureText(`Total value: `).width, currentHeight);
+
+	textConfig.text = `Top 3 GP earned`;
+	textConfig.fillStyle = Colors.ivory;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+
 	context.fillStyle = Colors.yellow;
 	context.lineWidth = 3;
 	context.strokeStyle = Colors.ivory;
 	context.beginPath();
-	context.moveTo(textCenter - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo(textCenter + context.measureText(title).width/2, currentHeight + 4);
+	context.moveTo(textCenter - context.measureText(textConfig.text).width/2, currentHeight + 4);
+	context.lineTo(textCenter + context.measureText(textConfig.text).width/2, currentHeight + 4);
 	context.stroke();
 
 	topGP.forEach((value, key) => {
 		let fullText = `${value.name}: ${numberWithCommas(value.gp)}`;
-		let name = `${value.name}: `;
-		let gp = numberWithCommas(value.gp);
-		currentHeight += context.measureText(title).actualBoundingBoxAscent + 10;
-		context.fillStyle = Colors.yellow;
-		context.fillText(name, textCenter - context.measureText(fullText).width/2, currentHeight);
-		context.fillStyle = '#4C77C4';
-		context.fillText(gp, textCenter - context.measureText(fullText).width/2 + context.measureText(name).width, currentHeight);
+		// let name = `${value.name}: `;
+		// let gp = numberWithCommas(value.gp);
+		tempTextConfig.text = numberWithCommas(value.gp);
+		textConfig.text = `${value.name}: `;
+		textConfig.fillStyle = Colors.yellow;
+		currentHeight += context.measureText(`${tempTextConfig.text}${textConfig.text}`).actualBoundingBoxAscent + 10;
+		textConfig.yPosition = currentHeight;
+		textConfig.xPosition = textCenter - context.measureText(`${tempTextConfig.text}${textConfig.text}`).width/2;
+		textOutput.push({...textConfig});
+		// context.fillText(name, textCenter - context.measureText(fullText).width/2, currentHeight);
+		// context.fillStyle = '#4C77C4';
+		tempTextConfig.text = `${value.name}: `;
+		textConfig.text = numberWithCommas(value.gp);
+		textConfig.fillStyle = getGPColor(BigInt(value.gp));
+		textConfig.text = numberWithCommas(value.gp);
+		textConfig.xPosition = textCenter - context.measureText(`${tempTextConfig.text}${textConfig.text}`).width/2 + context.measureText(tempTextConfig.text).width;
+		// context.fillText(gp, textCenter - context.measureText(fullText).width/2 + context.measureText(name).width, currentHeight);
+		textOutput.push({...textConfig});
 	});
 
-	title = `Double Broadcasts`;
-	context.fillStyle = Colors.ivory;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
+	textConfig.text = `Double Broadcasts`;
+	// title = `Double Broadcasts`;
+	textConfig.fillStyle = Colors.ivory;
+	// context.fillStyle = Colors.ivory;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.yPosition = currentHeight;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textOutput.push({...textConfig});
+	// context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
+
 	context.fillStyle = Colors.yellow;
 	context.lineWidth = 3;
 	context.strokeStyle = Colors.ivory;
 	context.beginPath();
-	context.moveTo(textCenter - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo(textCenter + context.measureText(title).width/2, currentHeight + 4);
+	context.moveTo(textCenter - context.measureText(textConfig.text).width/2, currentHeight + 4);
+	context.lineTo(textCenter + context.measureText(textConfig.text).width/2, currentHeight + 4);
 	context.stroke();
 
 	doubleBroadcasts.forEach((value, key) => {
-		let totalString = '';
-		let totalLength;
-		let title = `${value.name}: ${value.item1} and ${value.item2}`;
-		currentHeight += context.measureText(title).actualBoundingBoxAscent + padding/2;
-		let name = `${value.name}: `;
-		totalString += name;
-		context.fillStyle = Colors.yellow;
-		context.fillText(name, textCenter - context.measureText(title).width/2, currentHeight);
-		totalLength = context.measureText(totalString).width
-		totalString += value.item1;
-		context.fillStyle = broadcasts.get(value.item1).color;
-		context.fillText(value.item1, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
-		context.fillStyle = Colors.yellow;
-		let text = ` and `;
-		totalLength = context.measureText(totalString).width;
-		totalString += text;
-		context.fillText(text, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
-		totalLength = context.measureText(totalString).width;
-		totalString += value.item2;
-		context.fillStyle = broadcasts.get(value.item2).color;
-		context.fillText(value.item2, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
+		let completeString = `${value.name}: ${value.item1} and ${value.item2}`;
+		currentHeight += context.measureText(completeString).actualBoundingBoxAscent + padding/2;
+		textConfig.yPosition = currentHeight;
+		textConfig.fillStyle = Colors.yellow;
+		textConfig.xPosition = textCenter - context.measureText(completeString).width/2;
+		textConfig.text = `${value.name}: `;
+		textOutput.push({...textConfig});
+
+		tempTextConfig.text = textConfig.text;
+		textConfig.text = value.item1;
+		textConfig.fillStyle = broadcasts.get(value.item1).color;
+		textConfig.xPosition = textCenter - context.measureText(completeString).width/2 + context.measureText(tempTextConfig.text).width;
+		textOutput.push({...textConfig});
+
+		textConfig.fillStyle = Colors.yellow;
+		tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+		textConfig.text = ` and `;
+		textConfig.xPosition = textCenter - context.measureText(completeString).width/2 + context.measureText(tempTextConfig.text).width;
+		textOutput.push({...textConfig});
+
+		tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+		textConfig.text = value.item2;
+		textConfig.fillStyle = broadcasts.get(textConfig.text).color;
+		textConfig.xPosition = textCenter - context.measureText(completeString).width/2 + context.measureText(tempTextConfig.text).width;
+		textOutput.push({...textConfig});
+
+		// let totalString = '';
+		// let totalLength;
+		// let title = `${value.name}: ${value.item1} and ${value.item2}`;
+		// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding/2;
+		// let name = `${value.name}: `;
+		// totalString += name;
+		// context.fillStyle = Colors.yellow;
+		// context.fillText(name, textCenter - context.measureText(title).width/2, currentHeight);
+		// totalLength = context.measureText(totalString).width
+		// totalString += value.item1;
+		// context.fillStyle = broadcasts.get(value.item1).color;
+		// context.fillText(value.item1, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
+		// context.fillStyle = Colors.yellow;
+		// let text = ` and `;
+		// totalLength = context.measureText(totalString).width;
+		// totalString += text;
+		// context.fillText(text, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
+		// totalLength = context.measureText(totalString).width;
+		// totalString += value.item2;
+		// context.fillStyle = broadcasts.get(value.item2).color;
+		// context.fillText(value.item2, textCenter - context.measureText(title).width/2 + totalLength, currentHeight);
 	});
 
 	// title = `La Habibi: Barrows Dye and Ice Dye`;
@@ -200,99 +293,129 @@ Promise.all([Promise.all(itemImageMap)])
 	// context.fillStyle = ice;
 	// context.fillText(`Ice Dye`, textCenter - context.measureText(title).width/2 + context.measureText(`La Habibi: Barrows Dye and `).width, currentHeight);
 
-	title = `New Titles`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding
-	context.fillStyle = Colors.ivory;
-	context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
+	textConfig.text = `New Titles`;
+	// title = `New Titles`;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.yPosition = currentHeight;
+	textConfig.fillStyle = Colors.ivory;
+	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textOutput.push({...textConfig});
+	// context.fillStyle = Colors.ivory;
+	// context.fillText(title, textCenter - context.measureText(title).width/2, currentHeight);
 	context.fillStyle = Colors.yellow;
 	context.lineWidth = 3;
 	context.strokeStyle = Colors.ivory;
-	context.moveTo(textCenter - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo(textCenter + context.measureText(title).width/2, currentHeight + 4);
+	context.moveTo(textCenter - context.measureText(textConfig.text).width/2, currentHeight + 4);
+	context.lineTo(textCenter + context.measureText(textConfig.text).width/2, currentHeight + 4);
 	context.stroke();
 
 	// context.font = '28px Cinzel';
 	// title = `${clueTitles.easy.title}: ${names}`;
 
 	/* line format */
+	textConfig.text = ClueTitles.easy.title;
+	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.fillStyle = ClueTitles.easy.base.color;
+	// textConfig.xPosition =  (canvas.width - 16 - textStart)/4 + textStart - context.measureText(textConfig.text).width/2;
+	textConfig.xPosition = textStart;
+	textConfig.yPosition = currentHeight;
+	// context.fillStyle = ClueTitles.easy.base;
+	// title = ClueTitles.easy.title;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+
+	context.strokeStyle = ClueTitles.easy.base.color;
+	context.beginPath();
+	context.moveTo(textStart, currentHeight + 4);
+	context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
+	context.stroke();
+
+	tempTextConfig.text = textConfig.text;
+	tempTextConfig.xPosition = textConfig.xPosition;
+	tempTextConfig.yPosition = textConfig.yPosition;
+
+	textOutput.forEach(text => {
+		context.fillStyle = text.fillStyle;
+		context.font = text.font;
+		context.fillText(text.text, text.xPosition, text.yPosition);
+	});
 
 	/****** block format  */
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
 
-	context.fillStyle = ClueTitles.easy.base;
-	title = ClueTitles.easy.title;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = ClueTitles.easy.base;
-	context.beginPath();
-	context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
-	context.stroke();
+	// context.fillStyle = ClueTitles.easy.base;
+	// title = ClueTitles.easy.title;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// context.strokeStyle = ClueTitles.easy.base;
+	// context.beginPath();
+	// context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
+	// context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
+	// context.stroke();
 
 
-	context.fillStyle = ClueTitles.hards.base;
-	title = ClueTitles.hards.title;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = ClueTitles.hards.base;
-	context.beginPath();
-	context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
-	context.stroke();
+	// context.fillStyle = ClueTitles.hards.base;
+	// title = ClueTitles.hards.title;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// context.strokeStyle = ClueTitles.hards.base;
+	// context.beginPath();
+	// context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
+	// context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
+	// context.stroke();
 
-	title = `im Crystal`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillStyle = Colors.yellow;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	title = `Pintura`;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `im Crystal`;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// context.fillStyle = Colors.yellow;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Pintura`;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
 
 	
-	title = `DryDinoP0re`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	title = `Lady Aurora`;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `DryDinoP0re`;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Lady Aurora`;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
 	
-	title = `Bloodbarrer1`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Bloodbarrer1`;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
 
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
 
-	context.fillStyle = ClueTitles.elites.base;
-	title = ClueTitles.elites.title;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = ClueTitles.elites.base;
-	context.beginPath();
-	context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
-	context.stroke();
+	// context.fillStyle = ClueTitles.elites.base;
+	// title = ClueTitles.elites.title;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// context.strokeStyle = ClueTitles.elites.base;
+	// context.beginPath();
+	// context.moveTo((canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight + 4);
+	// context.lineTo((canvas.width - 16 - textStart)/4 + textStart + context.measureText(title).width/2, currentHeight + 4);
+	// context.stroke();
 
 
-	context.fillStyle = ClueTitles.masters.base;
-	title = ClueTitles.masters.title;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
-	context.strokeStyle = ClueTitles.masters.base;
-	context.beginPath();
-	context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
-	context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
-	context.stroke();
+	// context.fillStyle = ClueTitles.masters.base;
+	// title = ClueTitles.masters.title;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// context.strokeStyle = ClueTitles.masters.base;
+	// context.beginPath();
+	// context.moveTo((canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight + 4);
+	// context.lineTo((canvas.width - 16 - textStart)/4 * 3 + textStart + context.measureText(title).width/2, currentHeight + 4);
+	// context.stroke();
 
-	context.fillStyle = Colors.yellow;
-	title = `Yooper`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	title = `Jenspa`;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// context.fillStyle = Colors.yellow;
+	// title = `Yooper`;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Jenspa`;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
 	
-	title = `Annapoly`;
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
-	title = `Strektre`;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Annapoly`;
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// title = `Strektre`;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
 	
-	currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
-	title = `Curtizio`;
-	context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
+	// currentHeight += context.measureText(title).actualBoundingBoxAscent + padding;
+	// title = `Curtizio`;
+	// context.fillText(title, (canvas.width - 16 - textStart)/4 * 3 + textStart - context.measureText(title).width/2, currentHeight);
 	/********* end block format */
 
 	return canvas.encode('png')
