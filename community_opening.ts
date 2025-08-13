@@ -4,9 +4,11 @@ import { broadcasts } from './broadcast data.js';
 import { CommunityOpening, Colors, ClueTitles, TextOutput, getGPColor } from './config.ts';
 import { get_skeleton_image } from './skeleton.ts';
 import { Image } from '@napi-rs/canvas';
+import { text } from 'stream/consumers';
 
 CommunityOpening.title = '2025 Summer Community Opening';
-CommunityOpening.filename = '2025 Winter Event.png';
+CommunityOpening.filename = '2025 Summer Event.png';
+CommunityOpening.width = 1150;
 const imageRootPath = './images/';
 
 const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityOpening);
@@ -54,7 +56,7 @@ broadcasts.get(`Second-Age full helm`).data = {count: 0, value: 160262136};
 broadcasts.get(`Second-Age platebody`).data = {count: 0, value: 534532453};
 broadcasts.get(`Second-Age platelegs`).data = {count: 1, value: 793611791};
 broadcasts.get(`Second-Age sword`).data = {count: 1, value: 224004485};
-broadcasts.get(`Orlando Smith's hat`).data = {count: 1, value: 15500000000};
+broadcasts.get(`Orlando Smith's hat`).data = {count: 0, value: 15500000000};
 broadcasts.get(`Second-Age mage mask`).data = {count: 2, value: 176842716};
 broadcasts.get(`Second-Age robe top`).data = {count: 1, value: 702393889};
 broadcasts.get(`Second-Age robe bottom`).data = {count: 0, value: 719377500};
@@ -70,7 +72,7 @@ const totalCaskets = 175053;
 const totalParticipants = 78;
 doubleBroadcasts.push({name: 'Drashie', item1: 'Blood dye', item2: 'Barrows dye'});
 doubleBroadcasts.push({name: 'Elba', item1: 'Ice dye', item2: 'Shadow dye'});
-ClueTitles.elite.golden.list.push('Elba');
+ClueTitles.elite.golden.list.push({rsn: 'Elba', count: 45779});
 ClueTitles.easy.base.list.push('Luckyluke91');
 ClueTitles.elite.base.list.push('beausz');
 ClueTitles.easy.base.list.push('Klungeltje');
@@ -81,10 +83,12 @@ ClueTitles.hard.base.list.push('D Hansson');
 ClueTitles.medium.base.list.push('Mackenzie');
 ClueTitles.elite.base.list.push('Takiji');
 ClueTitles.easy.base.list.push('ChemTrailed');
+ClueTitles.elite.base.list.push('Luckyluke91');
 
-const textCenter = 750;
 const textStart = 490;
 const padding = 20;
+const textCenter = (canvas.width - padding - textStart)/2 + textStart;
+// const textCenter = 750;
 let totalBroadcasts = 0;
 let totalValue: bigint = BigInt(0);
 
@@ -140,7 +144,7 @@ Promise.all([Promise.all(itemImageMap)])
 		textConfig.yPosition = imageYPosition + 25;
 		// !(broadcastList[key].count == 0 || broadcastList[key].count == 1) ? context.fillText(broadcastList[key].count.toString(), imageXPosition + 12, imageYPosition + 25) : null;
 		!(broadcasts.get(itemMap.get(key)).data.count == 0 || broadcasts.get(itemMap.get(key)).data.count == 1) ? context.fillText(broadcasts.get(itemMap.get(key)).data.count.toString(), imageXPosition + 12, imageYPosition + 25) : null;
-		!(broadcasts.get(itemMap.get(key)).data.count == 0 || broadcasts.get(itemMap.get(key)).data.count == 1) ? textOutput.push(textConfig) : null;
+		!(broadcasts.get(itemMap.get(key)).data.count == 0 || broadcasts.get(itemMap.get(key)).data.count == 1) ? textOutput.push({...textConfig}) : null;
 	});
 
 	// context.font = '25px runescape';
@@ -324,27 +328,129 @@ Promise.all([Promise.all(itemImageMap)])
 	// title = `${clueTitles.easy.title}: ${names}`;
 
 	/* line format */
-	textConfig.text = ClueTitles.easy.title;
-	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
-	textConfig.fillStyle = ClueTitles.easy.base.color;
-	// textConfig.xPosition =  (canvas.width - 16 - textStart)/4 + textStart - context.measureText(textConfig.text).width/2;
-	textConfig.xPosition = textStart;
-	textConfig.yPosition = currentHeight;
-	// context.fillStyle = ClueTitles.easy.base;
-	// title = ClueTitles.easy.title;
-	// context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
+	// textConfig.text = `${ClueTitles.easy.title}: `;
+	// currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	// textConfig.fillStyle = ClueTitles.easy.base.color;
+	// // textConfig.xPosition =  (canvas.width - 16 - textStart)/4 + textStart - context.measureText(textConfig.text).width/2;
+	// textConfig.xPosition = textStart;
+	// textConfig.yPosition = currentHeight;
+	// textOutput.push({...textConfig});
+	// // context.fillStyle = ClueTitles.easy.base;
+	// // title = ClueTitles.easy.title;
+	// // context.fillText(title, (canvas.width - 16 - textStart)/4 + textStart - context.measureText(title).width/2, currentHeight);
 
-	context.strokeStyle = ClueTitles.easy.base.color;
-	context.beginPath();
-	context.moveTo(textStart, currentHeight + 4);
-	context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
-	context.stroke();
+	// context.strokeStyle = ClueTitles.easy.base.color;
+	// context.beginPath();
+	// context.moveTo(textStart, currentHeight + 4);
+	// context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
+	// context.stroke();
 
-	tempTextConfig.text = textConfig.text;
-	tempTextConfig.xPosition = textConfig.xPosition;
-	tempTextConfig.yPosition = textConfig.yPosition;
+	/* base title */
+	for (const [key, value] of Object.entries(ClueTitles)) {
+		if (value.base.list.length == 0) continue;
+		textConfig.text = `${value.title}: `;
+		currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+		textConfig.fillStyle = value.base.color;
+		// textConfig.xPosition =  (canvas.width - 16 - textStart)/4 + textStart - context.measureText(textConfig.text).width/2;
+		textConfig.xPosition = textStart;
+		textConfig.yPosition = currentHeight;
+		textOutput.push({...textConfig});
+
+		context.strokeStyle = value.base.color;
+		context.beginPath();
+		context.moveTo(textStart, currentHeight + 4);
+		context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
+		context.stroke();
+		
+		tempTextConfig.text = textConfig.text;
+		tempTextConfig.xPosition = textConfig.xPosition;
+		tempTextConfig.yPosition = textConfig.yPosition;
+
+		value.base.list.forEach((rsn, key) => {
+			textConfig.text = `${key == 0 ? '' : ','} ${rsn}`;
+			textConfig.xPosition = textStart + context.measureText(tempTextConfig.text).width;
+			textConfig.fillStyle = Colors.yellow;
+			textOutput.push({...textConfig});
+			tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+			tempTextConfig.xPosition = textConfig.xPosition;
+		});
+	}
+	
+	currentHeight += padding;
+
+	/* golden title */
+	for (const [key, value] of Object.entries(ClueTitles)) {
+		// if (value.golden?.list.length == 0 || !value.golden) continue;
+		// textConfig.text = `${value.title}: `;
+		// currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+		// textConfig.fillStyle = value.golden?.color;
+		// // textConfig.xPosition =  (canvas.width - 16 - textStart)/4 + textStart - context.measureText(textConfig.text).width/2;
+		// textConfig.xPosition = textStart;
+		// textConfig.yPosition = currentHeight;
+		// textOutput.push({...textConfig});
+
+		// context.strokeStyle = value.golden?.color;
+		// context.beginPath();
+		// context.moveTo(textStart, currentHeight + 4);
+		// context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
+		// context.stroke();
+		
+		// tempTextConfig.text = textConfig.text;
+		// tempTextConfig.xPosition = textConfig.xPosition;
+		// tempTextConfig.yPosition = textConfig.yPosition;
+
+		value.golden?.list.forEach((rsn, key) => {
+			/* center align */
+			let fullText = `Congratulations to ${rsn.rsn}`// for getting ${value.title} at ${numberWithCommas(rsn.count)} clues!`;
+			textConfig.text = `Congratulations to ${rsn.rsn}`;
+			currentHeight += padding + context.measureText(fullText).actualBoundingBoxAscent;
+			textConfig.yPosition = currentHeight;
+			// textConfig.text = `${rsn} for getting `;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2;
+			textConfig.fillStyle = Colors.yellow;
+			textOutput.push({...textConfig});
+
+			currentHeight += padding;
+			textConfig.yPosition = currentHeight;
+
+			fullText = `for getting ${value.title} at ${numberWithCommas(rsn.count)} clues!`;
+			
+			tempTextConfig.text = textConfig.text;
+			tempTextConfig.xPosition = textConfig.xPosition;
+			textConfig.text = `for getting `;
+			textConfig.fillStyle = Colors.yellow;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2;
+			textOutput.push({...textConfig});
+
+			tempTextConfig.text = textConfig.text;
+			tempTextConfig.xPosition = textConfig.xPosition;
+			textConfig.text = value.title;
+			textConfig.fillStyle = value.golden.color;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2 + context.measureText(tempTextConfig.text).width;
+			textOutput.push({...textConfig});
+			
+			tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+			tempTextConfig.xPosition = textConfig.xPosition;
+			textConfig.text = ` at ${numberWithCommas(rsn.count)} clues!`;
+			textConfig.fillStyle = Colors.yellow;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2 + context.measureText(tempTextConfig.text).width;
+			textOutput.push({...textConfig});
+
+			/* left align */
+			// textConfig.text = `${rsn.rsn} for getting ${value.title} at ${numberWithCommas(rsn.count)} clues!`;
+			// currentHeight += padding + context.measureText(textConfig.text).actualBoundingBoxAscent;
+			// textConfig.yPosition = currentHeight;
+			// // textConfig.text = `${rsn} for getting `;
+			// textConfig.xPosition = textStart;// + context.measureText(tempTextConfig.text).width;
+			// textConfig.fillStyle = Colors.yellow;
+			// textOutput.push({...textConfig});
+			// tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+			// tempTextConfig.xPosition = textConfig.xPosition;
+		});
+	}
 
 	textOutput.forEach(text => {
+		console.log(text);
 		context.fillStyle = text.fillStyle;
 		context.font = text.font;
 		context.fillText(text.text, text.xPosition, text.yPosition);
