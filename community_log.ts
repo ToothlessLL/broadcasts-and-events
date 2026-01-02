@@ -19,23 +19,22 @@ const stats = {
 		, new: 0
 	}
 	, previous_gp: 42193196525828
-	, gp_gained: 3006764737407
+	, gp_gained: 3467191145993
 }
 
 const extraFunStats = [];
 extraFunStats.push(`Number of broadcasts since last update: ${numberWithCommas(stats.broadcasts.new - stats.broadcasts.old)}`);
 extraFunStats.push(`Total number of broadcasts: ${numberWithCommas(stats.broadcasts.new)}`);
 extraFunStats.push(`GP gained since last update: ${numberWithCommas(stats.gp_gained)}`);
-extraFunStats.push(`Highest Broadcast Month: December 2025 (722)`);
+extraFunStats.push(`Highest Broadcast Month: December 2025 (771)`);
 extraFunStats.push(`Lowest Broadcast Month: October 2025 (100)`);
-extraFunStats.push(`Broadcast with Highest Accumulated Wealth: Blood dye (1033.8B gp)`);
+extraFunStats.push(`Broadcast with Highest Accumulated Wealth: Blood dye (1182.4B gp)`);
 extraFunStats.push(`Least Common Drop: Second-Age full helm (0)`);
-extraFunStats.push(`Orlando Smith's Hat Proc Broadcasts: 7`);
+extraFunStats.push(`Orlando Smith's Hat Proc Broadcasts: 8`);
 extraFunStats.push(`Double Broadcasts: 8`);
 extraFunStats.push(`Player with the most Broadcasts in 1 month: Jere (158), December 2025`);
 extraFunStats.push(`Player with most Broadcasts: Jere (158)`);
-extraFunStats.push(`Number of days without a SINGLE broadcast posted: 22`);
-
+extraFunStats.push(`Number of days without a SINGLE broadcast posted: 18`);
 // const canvas: Promise<Canvas> | Canvas = await get_skeleton_image(CommunityLog);
 
 const imageRootPath = '.';
@@ -112,21 +111,21 @@ broadcasts.get(`Second-Age range legs`).old = 37;
 broadcasts.get(`Second-Age bow`).old = 78;
 
 //get new data
-broadcasts.get(`Barrows dye`).new = 8857;
-broadcasts.get(`Shadow dye`).new = 5644;
-broadcasts.get(`Ice dye`).new = 3421;
-broadcasts.get(`Third Age dye`).new = 1100;
-broadcasts.get(`Blood dye`).new = 1113;
+broadcasts.get(`Barrows dye`).new = 8871;
+broadcasts.get(`Shadow dye`).new = 5653;
+broadcasts.get(`Ice dye`).new = 3428;
+broadcasts.get(`Third Age dye`).new = 1102;
+broadcasts.get(`Blood dye`).new = 1115;
 broadcasts.get(`Third age full helmet`).new = 245;
 broadcasts.get(`Third age platebody`).new = 255;
 broadcasts.get(`Third age platelegs`).new = 247;
 broadcasts.get(`Third age kiteshield`).new = 226;
-broadcasts.get(`Backstab cape`).new = 3487;
-broadcasts.get(`Third age mage hat`).new = 235;
-broadcasts.get(`Third age robe top`).new = 253;
+broadcasts.get(`Backstab cape`).new = 3490;
+broadcasts.get(`Third age mage hat`).new = 236;
+broadcasts.get(`Third age robe top`).new = 254;
 broadcasts.get(`Third age robe`).new = 211;
 broadcasts.get(`Third age amulet`).new = 274;
-broadcasts.get(`Sack of effigies`).new = 1821;
+broadcasts.get(`Sack of effigies`).new = 1828;
 broadcasts.get(`Third age ranger coif`).new = 238;
 broadcasts.get(`Third age ranger body`).new = 232;
 broadcasts.get(`Third age ranger chaps`).new = 217;
@@ -141,7 +140,7 @@ broadcasts.get(`Second-Age full helm`).new = 26;
 broadcasts.get(`Second-Age platebody`).new = 31;
 broadcasts.get(`Second-Age platelegs`).new = 35;
 broadcasts.get(`Second-Age sword`).new = 120;
-broadcasts.get(`Orlando Smith's hat`).new = 247;
+broadcasts.get(`Orlando Smith's hat`).new = 249;
 broadcasts.get(`Second-Age mage mask`).new = 29;
 broadcasts.get(`Second-Age robe top`).new = 40;
 broadcasts.get(`Second-Age robe bottom`).new = 33;
@@ -150,11 +149,11 @@ broadcasts.get(`Blank`).new = 0;
 broadcasts.get(`Second-Age range coif`).new = 37;
 broadcasts.get(`Second-Age range top`).new = 42;
 broadcasts.get(`Second-Age range legs`).new = 39;
-broadcasts.get(`Second-Age bow`).new = 88;
+broadcasts.get(`Second-Age bow`).new = 89;
 
 //get prices
-broadcasts.get(`Barrows dye`).value = 123632255;
-broadcasts.get(`Shadow dye`).value = 1192243834;
+broadcasts.get(`Barrows dye`).value = 118922153;
+broadcasts.get(`Shadow dye`).value = 1141087504;
 broadcasts.get(`Ice dye`).value = 1066322154;
 broadcasts.get(`Third Age dye`).value = 9500000000;
 broadcasts.get(`Blood dye`).value = 11000000000;
@@ -162,7 +161,7 @@ broadcasts.get(`Third age full helmet`).value = 219268833;
 broadcasts.get(`Third age platebody`).value = 449992479;
 broadcasts.get(`Third age platelegs`).value = 811032052;
 broadcasts.get(`Third age kiteshield`).value = 234190472;
-broadcasts.get(`Backstab cape`).value = 2115896;
+broadcasts.get(`Backstab cape`).value = 2048563;
 broadcasts.get(`Third age mage hat`).value = 200041007;
 broadcasts.get(`Third age robe top`).value = 223160633;
 broadcasts.get(`Third age robe`).value = 202533744;
@@ -274,7 +273,8 @@ Promise.all(imageArray).then(output => {
 	broadcasts.forEach((value, key) => {
 		stats.broadcasts.old += value.old;
 		stats.broadcasts.new += value.new;
-		// stats.value.new += (value.new - value.old) * value.value;
+		// stats.gp_gained += (value.new - value.old) * value.value;
+		// console.log(key, (value.new - value.old) * value.value, value.new, value.old, value.value);
 		let image = output[value.index];
 		let imageXPosition = border.broadcast.old.left + 4 + ((index%5) * image.width);
 		let imageYPosition = border.broadcast.old.top + 34 + (image.height * Math.floor(index/5));
@@ -303,6 +303,7 @@ Promise.all(imageArray).then(output => {
 	// 	!(broadcasts[i].new == 0 || broadcasts[i].new == 1) ? context.fillText(broadcasts[i].new.toString(), imageXPosition + 12, imageYPosition + 25) : null;
 	// };
 	
+	console.log(stats.gp_gained, stats.previous_gp, stats.previous_gp + stats.gp_gained);
 	context.drawImage(output[6], border.broadcast.old.left + 10, 855, 40, 40);
 	context.drawImage(output[6], border.broadcast.new.left + 10, 855, 40, 40);
 	
