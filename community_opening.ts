@@ -7,7 +7,7 @@ import { Image } from '@napi-rs/canvas';
 
 CommunityOpening.title = '2026 Summer Community Opening';
 CommunityOpening.filename = '2026 Summer Community Opening.png';
-CommunityOpening.width = 1200;
+CommunityOpening.width = 1205;
 // CommunityOpening.height += 60;
 const imageRootPath = './images/';
 
@@ -84,7 +84,7 @@ ClueTitles.elite.base.list.push('Dio Tha Divi');
 ClueTitles.elite.base.list.push('Ordinaryboyz');
 ClueTitles.master.base.list.push('MaxedSkill');
 ClueTitles.hard.base.list.push('lazy spider');
-ClueTitles.elite.base.list.push('91283473');
+ClueTitles.elite.base.list.push('091283473');
 /*end here */
 
 const textStart = 490;
@@ -102,25 +102,26 @@ const itemMap = new Map();
 
 // const imageMetadata = new Map();
 
-for (const [key, value] of broadcasts) {
-  	console.log(key);
-	let litUnlit = 'lit';
-	const test = await loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`);
-	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
-	itemMap.set(index, key);
-	totalBroadcasts += value.data.count;
-	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
-}
-
-
-// broadcasts.forEach(async (value, key) => {
-// 	// console.log(value);
-// 	let litUnlit = value.data.count == 0 ? 'unlit' : 'lit';
+/*used to check if images are loading*/
+// for (const [key, value] of broadcasts) {
+//   	console.log(key);
+// 	let litUnlit = 'lit';
+// 	const test = await loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`);
 // 	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
 // 	itemMap.set(index, key);
 // 	totalBroadcasts += value.data.count;
 // 	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
-// });
+// }
+
+
+broadcasts.forEach(async (value, key) => {
+	// console.log(value);
+	let litUnlit = value.data.count == 0 ? 'unlit' : 'lit';
+	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
+	itemMap.set(index, key);
+	totalBroadcasts += value.data.count;
+	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
+});
 
 Promise.all([Promise.all(itemImageMap)])
 .then(result => {
