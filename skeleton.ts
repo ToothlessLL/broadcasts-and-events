@@ -37,63 +37,68 @@ export async function get_skeleton_image(config: CanvasConfig): Promise<Canvas> 
 	const verticalBorder = loadImage(`${imageRootPath}/images/vertical_border.png`);
 	const horizontalBorder = loadImage(`${imageRootPath}/images/horizontal_border.png`);
 	const backgroundImage = loadImage(`${imageRootPath}/images/blank.png`)
+
+	const top_left = loadImage(`${imageRootPath}/images/top_left.png`);
+	const top_right = loadImage(`${imageRootPath}/images/top_right.png`);
+	const bottom_left = loadImage(`${imageRootPath}/images/bottom_left.png`);
+	const bottom_right = loadImage(`${imageRootPath}/images/bottom_right.png`);
+	const top_fill = loadImage(`${imageRootPath}/images/top_fill.png`);
+	const bottom_fill = loadImage(`${imageRootPath}/images/bottom_fill.png`);
+	const right_fill = loadImage(`${imageRootPath}/images/right_fill.png`);
+	const left_fill = loadImage(`${imageRootPath}/images/left_fill.png`);
+	const background_fill = loadImage(`${imageRootPath}/images/blank.png`);
 	
 	const canvas = createCanvas(config.width as number, config.height as number);
 	const context = canvas.getContext('2d');
 
-	await Promise.all([header1, header2, header3, verticalBorder, horizontalBorder, backgroundImage])
+	await Promise.all([top_left, top_right, bottom_left, bottom_right, top_fill, bottom_fill, left_fill, right_fill, background_fill])
 	.then(result => {
-		const header1 = result[0];
-		const header2 = result[1];
-		const header3 = result[2];
-		const verticalBorder = result[3];
-		const horizontalBorder = result[4];
-		const backgroundImage = result[5];
+		const top_left = result[0];
+		const top_right = result[1];
+		const bottom_left = result[2];
+		const bottom_right = result[3];
+		const top_fill = result[4];
+		const bottom_fill = result[5];
+		const left_fill = result[6];
+		const right_fill = result[7];
+		const background_fill = result[8];
 
 		context.font = '25px trajan pro';
 		context.fillStyle = Colors.yellow as string;
 		let titleWidth = context.measureText(config.title as string).width;
 
-		context.drawImage(backgroundImage, 11, 29, canvas.width, canvas.height);
-		context.drawImage(header1, 0, 0, header1.width, header1.height);
-		for (let i = header1.width; i < titleWidth + 100 + 15; i += header2.width) context.drawImage(header2, i, 0, header2.width, header2.height);
-		context.drawImage(header3, titleWidth + 100 + 15, 0, header3.width, header3.height);
+		context.drawImage(background_fill, right_fill.width, top_fill.height, canvas.width, canvas.height);
+		// context.drawImage(header1, 0, 0, header1.width, header1.height);
+		// for (let i = header1.width; i < titleWidth + 100 + 15; i += header2.width) context.drawImage(header2, i, 0, header2.width, header2.height);
+		// context.drawImage(header3, titleWidth + 100 + 15, 0, header3.width, header3.height);
 
 		/* top border starts at 29 */
 		/* left border starts at 11 */
 
 		let currentBorder = horizontalBorder;
 
-		for (let i = 0; i < canvas.width; i += currentBorder.width) {
-			if (i >= 11 && i < 11 + currentBorder.width) {
-				context.drawImage(currentBorder, 11, canvas.height - currentBorder.height, currentBorder.width, currentBorder.height);
-				context.drawImage(currentBorder, 11 + currentBorder.width, canvas.height - currentBorder.height, currentBorder.width, currentBorder.height);
-			}
-			else if (i >= 11) context.drawImage(currentBorder, i, canvas.height - currentBorder.height, currentBorder.width, currentBorder.height);
-			if (i >= titleWidth + 100 + 15 + header3.width && i < titleWidth + 100 + 15 + header3.width + currentBorder.width) {
-				context.drawImage(currentBorder, titleWidth + 100 + 15 + header3.width, 29, currentBorder.width, currentBorder.height);
-				context.drawImage(currentBorder, titleWidth + 100 + 15 + header3.width + currentBorder.width, 29, currentBorder.width, currentBorder.height);
-			}
-			else if (i >= titleWidth + 100 + 15 + header3.width) context.drawImage(currentBorder, i, 29, currentBorder.width, currentBorder.height);
+		for (let i = 0; i < canvas.width; i += top_fill.width) {
+			context.drawImage(top_fill, i, 0, top_fill.width, top_fill.height);
+			context.drawImage(bottom_fill, i, canvas.height - bottom_fill.height, bottom_fill.width, bottom_fill.height);
 		}
 
-		currentBorder = verticalBorder;
-		for (let i = 0; i < canvas.height; i += currentBorder.height) {
-			if (i >= 29 && i < 29 + currentBorder.height) {
-				context.drawImage(currentBorder, canvas.width - currentBorder.width, 29, currentBorder.width, currentBorder.height);
-				context.drawImage(currentBorder, canvas.width - currentBorder.width, 29 + currentBorder.height, currentBorder.width, currentBorder.height);
-			}
-			else if (i >= 29) context.drawImage(currentBorder, canvas.width - currentBorder.width, i, currentBorder.width, currentBorder.height);
-			if (i >= 75 && i < 75 + currentBorder.width) {
-				context.drawImage(currentBorder, 11, 75, currentBorder.width, currentBorder.height);
-				context.drawImage(currentBorder, 11, 75 + currentBorder.width, currentBorder.width, currentBorder.height);
-			}
-			else if (i >= 75) context.drawImage(currentBorder, 11, i, currentBorder.width, currentBorder.height);
+		for (let i = 0; i < canvas.height; i += left_fill.height) {
+			context.drawImage(left_fill, 0, i, left_fill.width, left_fill.height);
+			context.drawImage(right_fill, canvas.width - right_fill.width, i, right_fill.width, right_fill.height);
 		}
+
+		context.clearRect(0, 0, top_left.width, top_left.height);
+		context.clearRect(canvas.width - top_right.width, 0, top_right.width, top_right.height);
+		context.clearRect(0, canvas.height - bottom_left.height, bottom_left.width, bottom_right.width);
+		context.clearRect(canvas.width - bottom_right.width, canvas.height - bottom_right.height, bottom_right.width, bottom_right.height);
+		context.drawImage(top_left, 0, 0, top_left.width, top_left.height);
+		context.drawImage(top_right, canvas.width - top_right.width, 0, top_right.width, top_right.height);
+		context.drawImage(bottom_left, 0, canvas.height - bottom_left.height, bottom_left.width, bottom_left.height);
+		context.drawImage(bottom_right, canvas.width - bottom_right.width, canvas.height - bottom_right.height, bottom_right.width, bottom_right.height);
 
 		// context.drawImage(borders, 0, 0, canvas.width, canvas.height);
 		
-		context.fillText(config.title as string, 100, 42);
+		context.fillText(config.title as string, top_left.width + 5, 42);
 
 		// return canvas.encode('png')
 	})

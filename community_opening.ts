@@ -102,14 +102,25 @@ const itemMap = new Map();
 
 // const imageMetadata = new Map();
 
-broadcasts.forEach((value, key) => {
-	console.log(value);
-	let litUnlit = value.data.count == 0 ? 'unlit' : 'lit';
+for (const [key, value] of broadcasts) {
+  	console.log(key);
+	let litUnlit = 'lit';
+	const test = await loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`);
 	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
 	itemMap.set(index, key);
 	totalBroadcasts += value.data.count;
 	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
-});
+}
+
+
+// broadcasts.forEach(async (value, key) => {
+// 	// console.log(value);
+// 	let litUnlit = value.data.count == 0 ? 'unlit' : 'lit';
+// 	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
+// 	itemMap.set(index, key);
+// 	totalBroadcasts += value.data.count;
+// 	totalValue += BigInt(value.data.count.toString()) * BigInt(value.data.value.toString());
+// });
 
 Promise.all([Promise.all(itemImageMap)])
 .then(result => {
@@ -361,6 +372,7 @@ Promise.all([Promise.all(itemImageMap)])
 		textOutput.push({...textConfig});
 
 		context.strokeStyle = value.base.color;
+		context.lineWidth = 2;
 		context.beginPath();
 		context.moveTo(textStart, currentHeight + 4);
 		context.lineTo(textStart + context.measureText(textConfig.text).width, currentHeight + 4);
