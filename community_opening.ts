@@ -7,7 +7,7 @@ import { Image } from '@napi-rs/canvas';
 
 CommunityOpening.title = '2026 Summer Community Opening';
 CommunityOpening.filename = '2026 Summer Community Opening.png';
-CommunityOpening.width = 1100;
+CommunityOpening.width = 1200;
 // CommunityOpening.height += 60;
 const imageRootPath = './images/';
 
@@ -84,6 +84,7 @@ ClueTitles.elite.base.list.push('Dio Tha Divi');
 ClueTitles.elite.base.list.push('Ordinaryboyz');
 ClueTitles.master.base.list.push('MaxedSkill');
 ClueTitles.hard.base.list.push('lazy spider');
+ClueTitles.elite.base.list.push('91283473');
 /*end here */
 
 const textStart = 490;
