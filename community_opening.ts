@@ -154,29 +154,62 @@ Promise.all([Promise.all(itemImageMap)])
 	// let title = '2024 Clue Chasers Winter Opening Log'.toUpperCase();
 	// context.fillText(title, 100, 42);
 
+	/*total caskets opened*/
+	let xPosition;
+	textConfig.font = '20px trajan pro';
+	context.font = textConfig.font;
+	textConfig.fillStyle = Colors.ivory;
+	context.fillStyle = textConfig.fillStyle;
+	let currentHeight = 106;
+	textConfig.text = `Total caskets opened: `;
+	textConfig.xPosition = textCenter - context.measureText(`Total caskets opened: ${numberWithCommas(totalCaskets)}`).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+	xPosition = textConfig.xPosition + context.measureText(textConfig.text).width;
+	
 	textConfig.font = '20px trajan pro';
 	context.font = textConfig.font;
 	textConfig.fillStyle = Colors.yellow;
 	context.fillStyle = textConfig.fillStyle;
-	let currentHeight = 106;
-	textConfig.text = `Total caskets opened: ${numberWithCommas(totalCaskets)}`;
-	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.text = numberWithCommas(totalCaskets);
+	textConfig.xPosition = xPosition;
 	textConfig.yPosition = currentHeight;
 	textOutput.push({...textConfig});
 
-	textConfig.text = `Total participants: ${numberWithCommas(totalParticipants)}`;
+	/*total participants*/
+	textConfig.fillStyle = Colors.ivory;
+	textConfig.text = `Total participants: `;
 	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
 	// currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
-	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.xPosition = textCenter - context.measureText(`Total participants: ${numberWithCommas(totalParticipants)}`).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+	xPosition = textConfig.xPosition + context.measureText(textConfig.text).width;
+	
+	textConfig.fillStyle = Colors.yellow;
+	textConfig.text = numberWithCommas(totalParticipants);
+	// currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
+	textConfig.xPosition = xPosition;
 	textConfig.yPosition = currentHeight;
 	textOutput.push({...textConfig});
 
-	textConfig.text = `Total broadcasts: ${numberWithCommas(totalBroadcasts)}`;
+	/*total broadcasts*/
+	textConfig.fillStyle = Colors.ivory;
+	textConfig.text = `Total broadcasts: `;
 	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
-	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
+	textConfig.xPosition = textCenter - context.measureText(`Total broadcasts: ${numberWithCommas(totalBroadcasts)}`).width/2;
+	textConfig.yPosition = currentHeight;
+	textOutput.push({...textConfig});
+	xPosition = textConfig.xPosition + context.measureText(textConfig.text).width;
+
+	textConfig.fillStyle = Colors.yellow;
+	textConfig.text = numberWithCommas(totalBroadcasts);
+	textConfig.xPosition = xPosition;
 	textConfig.yPosition = currentHeight;
 	textOutput.push({...textConfig});
 
+	/*total value*/
+	textConfig.fillStyle = Colors.ivory;
 	textConfig.text = `Total value: ${numberWithCommas(totalValue)}`;
 	currentHeight += context.measureText(textConfig.text).actualBoundingBoxAscent + padding;
 	textConfig.xPosition = textCenter - context.measureText(textConfig.text).width/2;
@@ -372,11 +405,19 @@ Promise.all([Promise.all(itemImageMap)])
 		value.golden?.list.forEach((rsn, key) => {
 			/* center align */
 			let fullText = `Congratulations to ${rsn.rsn}`// for getting ${value.title} at ${numberWithCommas(rsn.count)} clues!`;
-			textConfig.text = `Congratulations to ${rsn.rsn}`;
+			textConfig.text = `Congratulations to `;
 			currentHeight += padding + context.measureText(fullText).actualBoundingBoxAscent;
 			textConfig.yPosition = currentHeight;
 			// textConfig.text = `${rsn} for getting `;
 			textConfig.xPosition = textCenter - context.measureText(fullText).width/2;
+			textConfig.fillStyle = Colors.ivory;
+			textOutput.push({...textConfig});
+			xPosition = textConfig.xPosition + context.measureText(textConfig.text).width;
+			
+			textConfig.text = rsn.rsn;
+			textConfig.yPosition = currentHeight;
+			// textConfig.text = `${rsn} for getting `;
+			textConfig.xPosition = xPosition
 			textConfig.fillStyle = Colors.yellow;
 			textOutput.push({...textConfig});
 
@@ -388,7 +429,7 @@ Promise.all([Promise.all(itemImageMap)])
 			tempTextConfig.text = textConfig.text;
 			tempTextConfig.xPosition = textConfig.xPosition;
 			textConfig.text = `for getting `;
-			textConfig.fillStyle = Colors.yellow;
+			textConfig.fillStyle = Colors.ivory;
 			textConfig.xPosition = textCenter - context.measureText(fullText).width/2;
 			textOutput.push({...textConfig});
 
@@ -401,8 +442,22 @@ Promise.all([Promise.all(itemImageMap)])
 			
 			tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
 			tempTextConfig.xPosition = textConfig.xPosition;
-			textConfig.text = ` at ${numberWithCommas(rsn.count)} clues!`;
+			textConfig.text = ` at `;
+			textConfig.fillStyle = Colors.ivory;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2 + context.measureText(tempTextConfig.text).width;
+			textOutput.push({...textConfig});
+			
+			tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+			tempTextConfig.xPosition = textConfig.xPosition;
+			textConfig.text = numberWithCommas(rsn.count);
 			textConfig.fillStyle = Colors.yellow;
+			textConfig.xPosition = textCenter - context.measureText(fullText).width/2 + context.measureText(tempTextConfig.text).width;
+			textOutput.push({...textConfig});
+			
+			tempTextConfig.text = `${tempTextConfig.text}${textConfig.text}`;
+			tempTextConfig.xPosition = textConfig.xPosition;
+			textConfig.text = ` clues!`;
+			textConfig.fillStyle = Colors.ivory;
 			textConfig.xPosition = textCenter - context.measureText(fullText).width/2 + context.measureText(tempTextConfig.text).width;
 			textOutput.push({...textConfig});
 
