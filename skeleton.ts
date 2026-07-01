@@ -75,15 +75,17 @@ export async function get_skeleton_image(config: CanvasConfig): Promise<Canvas> 
 		/* top border starts at 29 */
 		/* left border starts at 11 */
 
-		let currentBorder = horizontalBorder;
-
 		for (let i = 0; i < canvas.width; i += top_fill.width) {
+			context.clearRect(i, 0, top_fill.width, top_fill.height);
 			context.drawImage(top_fill, i, 0, top_fill.width, top_fill.height);
+			context.clearRect(i, canvas.height - bottom_fill.height, bottom_fill.width, bottom_fill.height);
 			context.drawImage(bottom_fill, i, canvas.height - bottom_fill.height, bottom_fill.width, bottom_fill.height);
 		}
 
 		for (let i = 0; i < canvas.height; i += left_fill.height) {
+			context.clearRect(0, i, left_fill.width, left_fill.height);
 			context.drawImage(left_fill, 0, i, left_fill.width, left_fill.height);
+			context.clearRect(canvas.width - right_fill.width, i, right_fill.width, right_fill.height);
 			context.drawImage(right_fill, canvas.width - right_fill.width, i, right_fill.width, right_fill.height);
 		}
 

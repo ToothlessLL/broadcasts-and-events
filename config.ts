@@ -6,8 +6,8 @@ export interface Canvas {
 }
 
 export const CommunityLog: Canvas = {
-    width: 2010
-    , height: 915
+    width: 2000
+    , height: 835
     , title: 'Community Log'
     , filename: 'Broadcasts.png'
 };
