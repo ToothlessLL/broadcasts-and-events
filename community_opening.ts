@@ -117,6 +117,7 @@ const itemMap = new Map();
 broadcasts.forEach(async (value, key) => {
 	// console.log(value);
 	let litUnlit = value.data.count == 0 ? 'unlit' : 'lit';
+	// let litUnlit = 'unlit';
 	let index = itemImageMap.push(loadImage(`${imageRootPath}${value.filename}${key.toLowerCase() == 'blank' ? '' : `_${litUnlit}`}.png`)) - 1;
 	itemMap.set(index, key);
 	totalBroadcasts += value.data.count;
